@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.21.13
+
+### Patch Changes
+
+- 6393f33: dependabot: update svelte
+- 6393f33: dependabot: update typescript
+
 ## 0.21.12
 
 ### Patch Changes
