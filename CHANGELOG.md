@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.21.13
+
+### Patch Changes
+
+- 6909523: Check socket.dev
+
 ## 0.21.12
 
 ### Patch Changes
