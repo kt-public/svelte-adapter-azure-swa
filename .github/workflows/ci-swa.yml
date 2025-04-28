@@ -15,9 +15,7 @@ on:
         type: boolean
     secrets:
       WORKFLOW_APP_ID:
-        required: true
       WORKFLOW_APP_PRIVATE_KEY:
-        required: true
       AZURE_STATIC_WEB_APPS_API_TOKEN:
 
 permissions:
@@ -54,22 +52,26 @@ jobs:
     outputs:
       result: ${{ steps.token.outputs.result || 'false' }}
     steps:
+      # We only run azure SWA deployment if we push to the default branch or create a PR into the default branch from our own org!
+
       # Check that it's a push into the default branch
       - id: main-push
-        if: github.event_name == 'push' && github.ref == 'refs/heads/${{ github.event.repository.default_branch }}'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
+          echo "Push to main branch detected."
           echo "github.ref: ${{ github.ref }}"
-          echo "compare ref: refs/heads/${{ github.event.repository.default_branch }}"
+          echo "github.event_name: ${{ github.event_name }}"
           echo "result=true" >> "$GITHUB_OUTPUT"
 
       # Check that it's a pull request into the default branch from within the same organization
       - id: pr-to-main
-        if: >-
-          ${{ steps.main-push.outputs.result != 'true' &&
+        if: |
+          steps.main-push.outputs.result != 'true' &&
           github.event_name == 'pull_request' &&
           github.event.pull_request.base.ref == github.event.repository.default_branch &&
-          github.event.pull_request.head.repo.owner.login == github.event.repository.owner.login }}
+          github.event.pull_request.head.repo.owner.login == github.event.repository.owner.login
         run: |
+          echo "Pull request into main branch detected from the same organization."
           echo "github.event.pull_request.base.ref: ${{ github.event.pull_request.base.ref }}"
           echo "github.event.repository.default_branch: ${{ github.event.repository.default_branch }}"
           echo "github.event.pull_request.head.repo.owner.login: ${{ github.event.pull_request.head.repo.owner.login }}"
@@ -106,11 +108,21 @@ jobs:
           app-id: ${{ secrets.WORKFLOW_APP_ID }}
           private-key: ${{ secrets.WORKFLOW_APP_PRIVATE_KEY }}
           configure-git: false
+          # Default to github token if secrets are not provided
+          default-to-github-token: true
 
       - uses: actions/checkout@v4
         if: ${{ needs.do-swa-azure.outputs.result == 'true' }}
         with:
           token: ${{ steps.app-token.outputs.token }}
+
+      - id: node-api-runtime
+        if: ${{ needs.do-swa-azure.outputs.result == 'true' }}
+        run: |
+          NODE_API_RUNTIME_MAJOR=$(node -v | cut -d. -f1 | cut -dv -f2)
+          echo "NODE_API_RUNTIME_MAJOR=$NODE_API_RUNTIME_MAJOR" >> "$GITHUB_ENV"
+          NODE_API_RUNTIME=node:$NODE_API_RUNTIME_MAJOR
+          echo "NODE_API_RUNTIME=$NODE_API_RUNTIME" >> "$GITHUB_ENV"
 
       - uses: kt-actions/npm-run-script@v1
         if: ${{ needs.do-swa-azure.outputs.result == 'true' }}
@@ -126,8 +138,6 @@ jobs:
       - uses: ./.github/actions/static-web-apps-deploy-wrapper
         if: ${{ needs.do-swa-azure.outputs.result == 'true' }}
         id: build-deploy
-        env:
-          NODE_API_RUNTIME: node:${{ steps.api-runtime.outputs.major }}
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ steps.app-token.outputs.token }} # Used for Github integrations (i.e. PR comments)
