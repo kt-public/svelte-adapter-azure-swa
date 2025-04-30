@@ -9,7 +9,7 @@ on:
 # cancel in-progress runs on new commits to same PR (gitub.event.number)
 concurrency:
   # group: ${{ github.workflow }}-${{ github.event.number || github.sha }}
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.repository }}-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -62,15 +62,41 @@ jobs:
             echo "CACHE_RESET=${{ vars.CACHE_RESET }}" >> "$GITHUB_OUTPUT"
           fi
 
-  ci:
+  check:
     needs: config
-    uses: kt-workflows/npm-ci/.github/workflows/main.yml@v1
-    with:
-      matrix-node-version: ${{ needs.config.outputs.matrix-node-version }}
-      cache-additional-path: ${{ needs.config.outputs.cache-additional-path }}
-      cache-reset: ${{ needs.config.outputs.cache-reset == 'true' }}
-    secrets:
-      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: kt-workflows/actions/npm-ci-check@main
+        with:
+          matrix-node-version: ${{ needs.config.outputs.matrix-node-version }}
+          cache-additional-path: ${{ needs.config.outputs.cache-additional-path }}
+          # cache-reset: true
+
+  test:
+    needs: config
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ${{ fromJson(needs.config.outputs.matrix-node-version) }}
+    steps:
+      - uses: kt-workflows/actions/npm-ci-test@main
+        with:
+          # pass the matrix node version to the called workflow
+          node-version: ${{ matrix.node-version }}
+          cache-additional-path: ${{ needs.config.outputs.cache-additional-path }}
+          # cache-reset: true
+
+  # No sonar scan for now
+  # sonar:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: kt-workflows/actions/npm-ci-sonar@main
+  #       with:
+  #         matrix-node-version: ${{ vars.MATRIX_NODE_VERSION }}
+  #         sonar-token: ${{ secrets.SONAR_TOKEN }}
+  #         fail-on-empty-token: true
+  #         cache-additional-path: ${{ vars.CACHE_ADDITIONAL_PATH }}
+  #         # cache-reset: true
 
   ci-swa:
     needs: config
@@ -83,7 +109,7 @@ jobs:
 
   retry-failed:
     runs-on: ubuntu-latest
-    needs: [ci, ci-swa]
+    needs: [check, test, ci-swa]
     if: failure() && fromJSON(github.run_attempt) < 2
     permissions:
       actions: write
