@@ -7,6 +7,9 @@ on:
       matrix-node-version:
         required: true
         type: string
+      install-script:
+        required: false
+        type: string
       cache-additional-path:
         required: false
         type: string
@@ -37,10 +40,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache-additional-path: ${{ inputs.cache-additional-path }}
           cache-reset: ${{ inputs.cache-reset }}
-          install-script: |
-            npm ci
-            npm ci --prefix ./tests/demo
-            npm exec playwright install --prefix ./tests/demo
+          install-script: ${{ inputs.install-script }}
           run-script: npm run test:swa --prefix ./tests/demo
           working-directory: .
 
@@ -124,10 +124,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache-additional-path: ${{ inputs.cache-additional-path }}
           cache-reset: ${{ inputs.cache-reset }}
-          install-script: |
-            npm ci
-            npm ci --prefix ./tests/demo
-            npm exec playwright install --prefix ./tests/demo
+          install-script: ${{ inputs.install-script }}
           working-directory: .
 
       - uses: ./.github/actions/static-web-apps-deploy-wrapper
@@ -144,7 +141,7 @@ jobs:
           output_location: 'build/static' # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
 
-      - run: npm test
+      - run: npm test --prefix ./tests/demo
         if: ${{ steps.do-swa-azure.outputs.result == 'true' }}
         env:
           PLAYWRIGHT_TEST_BASE_URL: ${{ steps.build-deploy.outputs.static_web_app_url }}

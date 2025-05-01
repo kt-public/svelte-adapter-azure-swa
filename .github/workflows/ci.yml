@@ -21,7 +21,11 @@ env:
   PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
   DEFAULT_MATRIX_NODE_VERSION: '[20]'
   DEFAULT_CACHE_ADDITIONAL_PATH: /home/runner/.cache/ms-playwright
-  DEFAULT_CACHE_RESET: true
+  DEFAULT_CACHE_RESET: false
+  INSTALL_SCRIPT: |
+    npm ci
+    npm ci --prefix ./tests/demo
+    npm exec playwright install --prefix ./tests/demo
 
 jobs:
   # echo:
@@ -37,6 +41,7 @@ jobs:
       matrix-node-version: ${{ steps.config.outputs.MATRIX_NODE_VERSION }}
       cache-additional-path: ${{ steps.config.outputs.CACHE_ADDITIONAL_PATH }}
       cache-reset: ${{ steps.config.outputs.CACHE_RESET }}
+      install-script: ${{ steps.config.outputs.INSTALL_SCRIPT }}
     steps:
       - id: config
         run: |
@@ -61,6 +66,7 @@ jobs:
             echo "CACHE_RESET is set to '${{ vars.CACHE_RESET }}'."
             echo "CACHE_RESET=${{ vars.CACHE_RESET }}" >> "$GITHUB_OUTPUT"
           fi
+          echo "INSTALL_SCRIPT=$INSTALL_SCRIPT" >> "$GITHUB_OUTPUT"
 
   check:
     needs: config
@@ -69,6 +75,7 @@ jobs:
       - uses: kt-workflows/actions/npm-ci-check@main
         with:
           matrix-node-version: ${{ needs.config.outputs.matrix-node-version }}
+          install-script: ${{ needs.config.outputs.install-script }}
           cache-additional-path: ${{ needs.config.outputs.cache-additional-path }}
           # cache-reset: true
 
@@ -83,6 +90,7 @@ jobs:
         with:
           # pass the matrix node version to the called workflow
           node-version: ${{ matrix.node-version }}
+          install-script: ${{ needs.config.outputs.install-script }}
           cache-additional-path: ${{ needs.config.outputs.cache-additional-path }}
           # cache-reset: true
 
@@ -103,6 +111,7 @@ jobs:
     uses: ./.github/workflows/ci-swa.yml
     with:
       matrix-node-version: ${{ needs.config.outputs.matrix-node-version }}
+      install-script: ${{ needs.config.outputs.install-script }}
       cache-additional-path: ${{ needs.config.outputs.cache-additional-path }}
       cache-reset: ${{ needs.config.outputs.cache-reset == 'true' }}
     secrets: inherit
