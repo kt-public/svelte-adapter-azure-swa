@@ -127,7 +127,7 @@ jobs:
           install-script: |
             npm ci
             npm ci --prefix ./tests/demo
-            npx playwright install
+            npm exec playwright install --prefix ./tests/demo
           working-directory: .
 
       - uses: ./.github/actions/static-web-apps-deploy-wrapper
