@@ -18,10 +18,10 @@ permissions:
   pull-requests: write # to create comments (actions/github-script)
 
 env:
-  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
+  # PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
   DEFAULT_MATRIX_NODE_VERSION: '[20]'
   DEFAULT_CACHE_ADDITIONAL_PATH: /home/runner/.cache/ms-playwright
-  DEFAULT_CACHE_RESET: false
+  DEFAULT_CACHE_RESET: true
 
 jobs:
   # echo:
