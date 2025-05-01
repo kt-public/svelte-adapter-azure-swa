@@ -28,14 +28,14 @@ export const staticClientDir = 'static';
 
 /**
  * @param {Builder} builder
- * @param {string} outputDir
+ * @param {string} outDir
  * @param {string} tmpDir
  * @param {Options} options
  * @returns {RollupOptions}
  */
-function prepareRollupOptions(builder, outputDir, tmpDir, options) {
+function prepareRollupOptions(builder, outDir, tmpDir, options) {
 	const clientDir = builder.getClientDirectory();
-	const _outputDir = options.staticDir || join(outputDir, staticClientDir);
+	const _outputDir = options.staticDir || join(outDir, staticClientDir);
 	const input = Object.fromEntries(
 		globSync(`${clientDir}/**/*.js`).map((file) => [
 			// This removes `src/` as well as the file extension from each
@@ -73,7 +73,7 @@ export async function clientRollup(builder, outputDir, tmpDir, options) {
 	builder.log(`Writing client files to ${_outputClientDir}`);
 	builder.writeClient(_outputClientDir);
 
-	builder.log(`Building client to ${_outputClientDir}`);
+	builder.log(`Re-Building client to ${_outputClientDir}`);
 	const rollupOptions = prepareRollupOptions(builder, outputDir, tmpDir, options);
 	const bundle = await rollup(rollupOptions);
 	if (Array.isArray(rollupOptions.output)) {
