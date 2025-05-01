@@ -6,11 +6,16 @@
 
 # Get all dependencies and devDependencies into one array
 allDependencies=()
-if jq -e '.dependencies' package.json >/dev/null; then
-  allDependencies+=($(jq -r '.dependencies | keys[]' package.json))
-fi
-if jq -e '.devDependencies' package.json >/dev/null; then
-  allDependencies+=($(jq -r '.devDependencies | keys[]' package.json))
+if command -v jq >/dev/null 2>&1; then
+  if jq -e '.dependencies' package.json >/dev/null; then
+    allDependencies+=($(jq -r '.dependencies | keys[]' package.json))
+  fi
+  if jq -e '.devDependencies' package.json >/dev/null; then
+    allDependencies+=($(jq -r '.devDependencies | keys[]' package.json))
+  fi
+else
+  echo "jq is not installed. Setting allDependencies to an empty array."
+  allDependencies=()
 fi
 
 separator="------------------------------------------"
