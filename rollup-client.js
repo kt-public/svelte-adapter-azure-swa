@@ -29,11 +29,10 @@ export const staticClientDir = 'static';
 /**
  * @param {Builder} builder
  * @param {string} outDir
- * @param {string} tmpDir
  * @param {Options} options
  * @returns {RollupOptions}
  */
-function prepareRollupOptions(builder, outDir, tmpDir, options) {
+function prepareRollupOptions(builder, outDir, options) {
 	const clientDir = builder.getClientDirectory();
 	const _outputDir = options.staticDir || join(outDir, staticClientDir);
 	const input = Object.fromEntries(
@@ -61,10 +60,9 @@ function prepareRollupOptions(builder, outDir, tmpDir, options) {
  *
  * @param {Builder} builder
  * @param {string} outputDir
- * @param {string} tmpDir
  * @param {Options} options
  */
-export async function clientRollup(builder, outputDir, tmpDir, options) {
+export async function clientRollup(builder, outputDir, options) {
 	const _outputClientDir = options.staticDir || join(outputDir, staticClientDir);
 
 	builder.log(`Writing prerendered files to ${_outputClientDir}`);
@@ -74,7 +72,7 @@ export async function clientRollup(builder, outputDir, tmpDir, options) {
 	builder.writeClient(_outputClientDir);
 
 	builder.log(`Re-Building client to ${_outputClientDir}`);
-	const rollupOptions = prepareRollupOptions(builder, outputDir, tmpDir, options);
+	const rollupOptions = prepareRollupOptions(builder, outputDir, options);
 	const bundle = await rollup(rollupOptions);
 	if (Array.isArray(rollupOptions.output)) {
 		for (const output of rollupOptions.output) {

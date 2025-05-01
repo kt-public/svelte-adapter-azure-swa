@@ -4,8 +4,6 @@ import { ClientPrincipal, CustomStaticWebAppConfig } from './types/swa';
 
 export * from './types/swa';
 
-// Extract string, string[], RegExp and RegExp[] types from ExternalOption
-
 type ExternalOption = (string | RegExp)[] | string | RegExp;
 
 export type Options = {

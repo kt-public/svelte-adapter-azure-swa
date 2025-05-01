@@ -32,7 +32,7 @@ If you want to suppress this error, set allowReservedSwaRoutes to true in your a
 			builder.rimraf(tmpDir);
 			builder.rimraf(outputDir);
 			await serverRollup(builder, outputDir, tmpDir, options);
-			await clientRollup(builder, outputDir, tmpDir, options);
+			await clientRollup(builder, outputDir, options);
 			await buildConfig(builder, outputDir, tmpDir, options);
 		}
 	};
