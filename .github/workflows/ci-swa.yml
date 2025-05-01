@@ -40,7 +40,7 @@ jobs:
           install-script: |
             npm ci
             npm ci --prefix ./tests/demo
-            npx playwright install
+            npm exec playwright install --prefix ./tests/demo
           run-script: npm run test:swa --prefix ./tests/demo
           working-directory: .
 
