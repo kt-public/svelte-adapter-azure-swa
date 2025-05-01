@@ -29,9 +29,6 @@ jobs:
     strategy:
       matrix:
         node-version: ${{ fromJson(inputs.matrix-node-version) }}
-    defaults:
-      run:
-        working-directory: ./tests/demo
     steps:
       - uses: actions/checkout@v4
 
@@ -56,9 +53,6 @@ jobs:
     strategy:
       matrix:
         node-version: ${{ fromJson(inputs.matrix-node-version) }}
-    defaults:
-      run:
-        working-directory: ./tests/demo
     steps:
       # We only run azure SWA deployment if we push to the default branch or create a PR into the default branch from our own org!
 
