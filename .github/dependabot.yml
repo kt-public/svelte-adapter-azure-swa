@@ -8,7 +8,7 @@ updates:
   - package-ecosystem: 'npm' # See documentation for possible values
     directories:
       - '/'
-      - '/demo'
+      - '/tests/demo'
     schedule:
       interval: 'daily'
       time: '03:19' # UTC

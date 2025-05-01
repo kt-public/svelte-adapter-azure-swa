@@ -31,7 +31,7 @@ jobs:
         node-version: ${{ fromJson(inputs.matrix-node-version) }}
     defaults:
       run:
-        working-directory: demo
+        working-directory: ./tests/demo
     steps:
       - uses: actions/checkout@v4
 
@@ -58,7 +58,7 @@ jobs:
         node-version: ${{ fromJson(inputs.matrix-node-version) }}
     defaults:
       run:
-        working-directory: demo
+        working-directory: ./tests/demo
     steps:
       # We only run azure SWA deployment if we push to the default branch or create a PR into the default branch from our own org!
 
@@ -132,8 +132,9 @@ jobs:
           cache-reset: ${{ inputs.cache-reset }}
           install-script: |
             npm ci
+            npm ci --prefix ./tests/demo
             npx playwright install
-          working-directory: ./demo
+          working-directory: .
 
       - uses: ./.github/actions/static-web-apps-deploy-wrapper
         if: ${{ steps.do-swa-azure.outputs.result == 'true' }}
@@ -144,8 +145,8 @@ jobs:
           action: 'upload'
           ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: './demo' # App source code path
-          api_location: './demo/func' # Api source code path - optional
+          app_location: './tests/demo' # App source code path
+          api_location: './tests/demo/func' # Api source code path - optional
           output_location: 'build/static' # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
 
