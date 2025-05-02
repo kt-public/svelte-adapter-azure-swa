@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.22.0
+
+### Minor Changes
+
+- 9529b17: Migrate to rollup, fix issue with generated sourcemaps on the client.
+
+  The adapter was migrated to the `rollup` under the hood, instead of `esbuild`. The [same issue as for the `adapter-node`](https://github.com/sveltejs/kit/issues/10040) was taken into account and resolved.
+
+### Patch Changes
+
+- b8a95c3: dependabot: directory '/', update @types/node
+- dcbd420: dependabot: directory '/', update @types/node
+- 514f43f: dependabot: directory '/', update @azure/static-web-apps-cli
+- 514f43f: dependabot: directory '/', update vite
+- 878b22c: dependabot: directory '/', update typescript-eslint
+- 2a42c70: dependabot: directory '/', update @sveltejs/kit
+- 92c7486: dependabot: directory '/', update @eslint/compat
+- c0b67f5: dependabot: directory '/tests/demo', update svelte-check
+
 ## 0.21.14
 
 ### Patch Changes
