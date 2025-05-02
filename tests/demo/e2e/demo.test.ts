@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './baseFixtures';
 
 test('home page has expected h1', async ({ page }) => {
 	await page.goto('/', { waitUntil: 'networkidle', timeout: 60000 });
