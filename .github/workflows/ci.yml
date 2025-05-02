@@ -8,7 +8,6 @@ on:
 
 # cancel in-progress runs on new commits to same PR (gitub.event.number)
 concurrency:
-  # group: ${{ github.workflow }}-${{ github.event.number || github.sha }}
   group: ${{ github.repository }}-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
@@ -18,9 +17,7 @@ permissions:
   pull-requests: write # to create comments (actions/github-script)
 
 env:
-  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
   DEFAULT_MATRIX_NODE_VERSION: '[20]'
-  DEFAULT_CACHE_ADDITIONAL_PATH: /home/runner/.cache/ms-playwright
   DEFAULT_CACHE_RESET: false
 
 jobs:
@@ -35,7 +32,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       matrix-node-version: ${{ steps.config.outputs.MATRIX_NODE_VERSION }}
-      cache-additional-path: ${{ steps.config.outputs.CACHE_ADDITIONAL_PATH }}
       cache-reset: ${{ steps.config.outputs.CACHE_RESET }}
     steps:
       - id: config
@@ -46,13 +42,6 @@ jobs:
           else
             echo "MATRIX_NODE_VERSION is set to '${{ vars.MATRIX_NODE_VERSION }}'."
             echo "MATRIX_NODE_VERSION=${{ vars.MATRIX_NODE_VERSION }}" >> "$GITHUB_OUTPUT"
-          fi
-          if [[ -z "${{ vars.CACHE_ADDITIONAL_PATH }}" ]]; then
-            echo "CACHE_ADDITIONAL_PATH is not set. Using default value to $DEFAULT_CACHE_ADDITIONAL_PATH."
-            echo "CACHE_ADDITIONAL_PATH=$DEFAULT_CACHE_ADDITIONAL_PATH" >> "$GITHUB_OUTPUT"
-          else
-            echo "CACHE_ADDITIONAL_PATH is set to '${{ vars.CACHE_ADDITIONAL_PATH }}'."
-            echo "CACHE_ADDITIONAL_PATH=${{ vars.CACHE_ADDITIONAL_PATH }}" >> "$GITHUB_OUTPUT"
           fi
           if [[ -z "${{ vars.CACHE_RESET }}" ]]; then
             echo "CACHE_RESET is not set. Using default value to $DEFAULT_CACHE_RESET."
@@ -69,8 +58,7 @@ jobs:
       - uses: kt-workflows/actions/npm-ci-check@main
         with:
           matrix-node-version: ${{ needs.config.outputs.matrix-node-version }}
-          cache-additional-path: ${{ needs.config.outputs.cache-additional-path }}
-          # cache-reset: true
+          cache-reset: ${{ needs.config.outputs.cache-reset }}
 
   test:
     needs: config
@@ -83,27 +71,24 @@ jobs:
         with:
           # pass the matrix node version to the called workflow
           node-version: ${{ matrix.node-version }}
-          cache-additional-path: ${{ needs.config.outputs.cache-additional-path }}
-          # cache-reset: true
+          cache-reset: ${{ needs.config.outputs.cache-reset }}
 
-  # No sonar scan for now
-  # sonar:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: kt-workflows/actions/npm-ci-sonar@main
-  #       with:
-  #         matrix-node-version: ${{ vars.MATRIX_NODE_VERSION }}
-  #         sonar-token: ${{ secrets.SONAR_TOKEN }}
-  #         fail-on-empty-token: true
-  #         cache-additional-path: ${{ vars.CACHE_ADDITIONAL_PATH }}
-  #         # cache-reset: true
+  sonar:
+    needs: config
+    runs-on: ubuntu-latest
+    steps:
+      - uses: kt-workflows/actions/npm-ci-sonar@main
+        with:
+          matrix-node-version: ${{ needs.config.outputs.matrix-node-version }}
+          sonar-token: ${{ secrets.SONAR_TOKEN }}
+          fail-on-empty-token: true
+          cache-reset: ${{ needs.config.outputs.cache-reset }}
 
   ci-swa:
     needs: config
     uses: ./.github/workflows/ci-swa.yml
     with:
       matrix-node-version: ${{ needs.config.outputs.matrix-node-version }}
-      cache-additional-path: ${{ needs.config.outputs.cache-additional-path }}
       cache-reset: ${{ needs.config.outputs.cache-reset == 'true' }}
     secrets: inherit
 

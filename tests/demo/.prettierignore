@@ -4,7 +4,3 @@ pnpm-lock.yaml
 yarn.lock
 bun.lock
 bun.lockb
-
-# Demo subfolder - quick fix
-tests/demo-old
-tests/demo
