@@ -7,12 +7,12 @@ on:
       matrix-node-version:
         required: true
         type: string
-      install-script:
-        required: false
-        type: string
-      cache-additional-path:
-        required: false
-        type: string
+      # install-script:
+      #   required: false
+      #   type: string
+      # cache-additional-path:
+      #   required: false
+      #   type: string
       cache-reset:
         required: false
         type: boolean
@@ -21,13 +21,40 @@ on:
       WORKFLOW_APP_PRIVATE_KEY:
       AZURE_STATIC_WEB_APPS_API_TOKEN:
 
+env:
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
+  DEFAULT_CACHE_ADDITIONAL_PATH: /home/runner/.cache/ms-playwright
+  DEFAULT_INSTALL_SCRIPT: >-
+    npm ci &&
+    npm ci --prefix ./tests/demo &&
+    npm exec playwright install --prefix ./tests/demo
+
 permissions:
   contents: read # to fetch code (actions/checkout)
   pull-requests: write # to create comments (actions/github-script)
   actions: write # to create a comment (actions/github-script)
 
 jobs:
+  config:
+    # prepare the configuration for the workflow from different sources of variables
+    runs-on: ubuntu-latest
+    outputs:
+      cache-additional-path: ${{ steps.config.outputs.CACHE_ADDITIONAL_PATH }}
+      install-script: ${{ steps.config.outputs.INSTALL_SCRIPT }}
+    steps:
+      - id: config
+        run: |
+          if [[ -z "${{ vars.CACHE_ADDITIONAL_PATH }}" ]]; then
+            echo "CACHE_ADDITIONAL_PATH is not set. Using default value to $DEFAULT_CACHE_ADDITIONAL_PATH."
+            echo "CACHE_ADDITIONAL_PATH=$DEFAULT_CACHE_ADDITIONAL_PATH" >> "$GITHUB_OUTPUT"
+          else
+            echo "CACHE_ADDITIONAL_PATH is set to '${{ vars.CACHE_ADDITIONAL_PATH }}'."
+            echo "CACHE_ADDITIONAL_PATH=${{ vars.CACHE_ADDITIONAL_PATH }}" >> "$GITHUB_OUTPUT"
+          fi
+          echo "INSTALL_SCRIPT=$DEFAULT_INSTALL_SCRIPT" >> "$GITHUB_OUTPUT"
+
   swa-cli:
+    needs: config
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -38,13 +65,14 @@ jobs:
       - uses: kt-workflows/actions/npm-run-script@main
         with:
           node-version: ${{ matrix.node-version }}
-          cache-additional-path: ${{ inputs.cache-additional-path }}
           cache-reset: ${{ inputs.cache-reset }}
-          install-script: ${{ inputs.install-script }}
+          install-script: ${{ needs.config.outputs.install-script }}
+          cache-additional-path: ${{ needs.config.outputs.cache-additional-path }}
           run-script: npm run test:swa --prefix ./tests/demo
           working-directory: .
 
   swa-azure:
+    needs: config
     environment: development
     runs-on: ubuntu-latest
     # Deploy to the same environment and wait for the previous job to finish, if we have more than one node version to test
@@ -122,9 +150,9 @@ jobs:
         if: ${{ steps.do-swa-azure.outputs.result == 'true' }}
         with:
           node-version: ${{ matrix.node-version }}
-          cache-additional-path: ${{ inputs.cache-additional-path }}
           cache-reset: ${{ inputs.cache-reset }}
-          install-script: ${{ inputs.install-script }}
+          install-script: ${{ needs.config.outputs.install-script }}
+          cache-additional-path: ${{ needs.config.outputs.cache-additional-path }}
           working-directory: .
 
       - uses: ./.github/actions/static-web-apps-deploy-wrapper
