@@ -67,7 +67,7 @@ jobs:
       matrix:
         node-version: ${{ fromJson(needs.config.outputs.matrix-node-version) }}
     steps:
-      # Sonar runs the tests with coverage
+      # Sonar runs the tests with coverage, use this instead of npm-ci-test
       - uses: kt-workflows/actions/npm-ci-sonar@main
         with:
           matrix-node-version: ${{ vars.MATRIX_NODE_VERSION }}
