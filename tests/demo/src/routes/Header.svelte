@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import logo from '$lib/images/svelte-logo.svg';
 	import github from '$lib/images/github.svg';
+	import logo from '$lib/images/svelte-logo.svg';
 </script>
 
 <header>
@@ -24,6 +24,9 @@
 			</li>
 			<li aria-current={page.url.pathname.startsWith('/sverdle') ? 'page' : undefined}>
 				<a href="/sverdle">Sverdle</a>
+			</li>
+			<li aria-current={page.url.pathname === '/sentry-example-page' ? 'page' : undefined}>
+				<a href="/sentry-example-page">Sentry Example</a>
 			</li>
 		</ul>
 		<svg viewBox="0 0 2 3" aria-hidden="true">

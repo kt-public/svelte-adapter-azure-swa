@@ -1,29 +1,33 @@
+import { sentrySvelteKit } from '@sentry/sveltekit';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { svelteTesting } from '@testing-library/svelte/vite';
 import { defineConfig } from 'vite';
-import istanbul from 'vite-plugin-istanbul';
 
 export default defineConfig({
 	build: {
 		sourcemap: true
 	},
 	plugins: [
-		sveltekit(),
-		istanbul({
-			include: ['src/*', '../../src/entry/*', './func/sk_render/*'],
-			exclude: ['node_modules', 'test/'],
-			extension: ['.js', '.ts', '.svelte'],
-			requireEnv: false,
-			forceBuildInstrument: true
-		})
+		sentrySvelteKit({
+			adapter: 'other',
+			sourceMapsUploadOptions: {
+				org: 'konstantin-tarmyshov',
+				project: 'svelte-adapter-azure-swa',
+				sourcemaps: {
+					assets: ['./build/**/*', './func/**/*', './.svelte-kit/**/*']
+				}
+			}
+		}),
+		sveltekit()
+		// istanbul({
+		// 	include: ['src/*', '../../src/entry/*', './func/sk_render/*'],
+		// 	exclude: ['node_modules', 'test/'],
+		// 	extension: ['.js', '.ts', '.svelte'],
+		// 	requireEnv: false,
+		// 	forceBuildInstrument: true
+		// })
 	],
 	test: {
-		coverage: {
-			provider: 'istanbul', // or 'v8'
-			reporter: ['text', 'html', 'clover', 'json', 'lcov'],
-			include: ['src/**/*.{js,ts}'],
-			exclude: ['node_modules', 'test/']
-		},
 		workspace: [
 			{
 				extends: './vite.config.ts',
