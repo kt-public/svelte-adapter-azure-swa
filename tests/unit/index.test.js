@@ -3,9 +3,9 @@ import { rollup } from 'rollup';
 import { describe, expect, test, vi } from 'vitest';
 import azureAdapter from '../../src/index';
 import { generateConfig } from '../../src/swa-config';
-import { jsonMatching, toMatchJSON } from './json';
+import { jsonMatching } from './json';
 
-expect.extend({ jsonMatching, toMatchJSON });
+expect.extend({ jsonMatching });
 
 vi.mock('fs', () => ({
 	writeFileSync: vi.fn(),

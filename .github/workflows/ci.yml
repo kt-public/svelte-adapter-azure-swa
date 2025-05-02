@@ -67,23 +67,18 @@ jobs:
       matrix:
         node-version: ${{ fromJson(needs.config.outputs.matrix-node-version) }}
     steps:
-      - uses: kt-workflows/actions/npm-ci-test@main
+      # Sonar runs the tests with coverage
+      - uses: kt-workflows/actions/npm-ci-sonar@main
         with:
-          # pass the matrix node version to the called workflow
-          node-version: ${{ matrix.node-version }}
+          matrix-node-version: ${{ vars.MATRIX_NODE_VERSION }}
+          sonar-token: ${{ secrets.SONAR_TOKEN }}
+          fail-on-empty-token: true
           cache-reset: ${{ needs.config.outputs.cache-reset }}
-
-  # No sonar scan for now
-  # sonar:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: kt-workflows/actions/npm-ci-sonar@main
-  #       with:
-  #         matrix-node-version: ${{ vars.MATRIX_NODE_VERSION }}
-  #         sonar-token: ${{ secrets.SONAR_TOKEN }}
-  #         fail-on-empty-token: true
-  #         cache-additional-path: ${{ vars.CACHE_ADDITIONAL_PATH }}
-  #         # cache-reset: true
+      # - uses: kt-workflows/actions/npm-ci-test@main
+      #   with:
+      #     # pass the matrix node version to the called workflow
+      #     node-version: ${{ matrix.node-version }}
+      #     cache-reset: ${{ needs.config.outputs.cache-reset }}
 
   ci-swa:
     needs: config
