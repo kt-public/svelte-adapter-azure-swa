@@ -9,7 +9,7 @@ export default defineConfig({
 	},
 	plugins: [
 		sentrySvelteKit({
-			adapter: 'other',
+			adapter: process.env.SWA ? 'other' : 'node',
 			sourceMapsUploadOptions: {
 				org: 'konstantin-tarmyshov',
 				project: 'svelte-adapter-azure-swa',
