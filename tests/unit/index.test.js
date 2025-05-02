@@ -1,8 +1,8 @@
 import { existsSync, writeFileSync } from 'fs';
 import { rollup } from 'rollup';
 import { describe, expect, test, vi } from 'vitest';
-import azureAdapter from '../../index';
-import { generateConfig } from '../../swa-config';
+import azureAdapter from '../../src/index';
+import { generateConfig } from '../../src/swa-config';
 import { jsonMatching, toMatchJSON } from './json';
 
 expect.extend({ jsonMatching, toMatchJSON });

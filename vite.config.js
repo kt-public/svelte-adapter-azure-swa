@@ -11,7 +11,7 @@ export default defineConfig({
 				...configDefaults.exclude,
 				`${testsAppDir}/**`,
 				'./tests/**',
-				'./entry/index.js',
+				'./src/entry/index.js',
 				'./tests/unit/json.js'
 			],
 			reporter: ['text', 'html', 'clover', 'json', 'lcov']

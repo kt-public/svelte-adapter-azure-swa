@@ -131,11 +131,10 @@ function prepareRollupOptions(builder, outDir, tmpDir, options) {
  * @param {Options} options
  */
 export async function serverRollup(builder, outDir, tmpDir, options) {
-	builder.log(`Preparing serverless function in ${tmpDir}`);
-
 	const _outputApiServerDir = options.apiDir || join(outDir, apiServerDir);
-	const { serverRelativePath, manifestFile, envFile } = getPaths(builder, outDir, tmpDir);
+	builder.log(`Building serverless function to ${_outputApiServerDir}`);
 
+	const { serverRelativePath, manifestFile, envFile } = getPaths(builder, outDir, tmpDir);
 	const debug = options.debug || false;
 
 	builder.copy(files, tmpDir);
@@ -164,7 +163,6 @@ export async function serverRollup(builder, outDir, tmpDir, options) {
 	// Write environment
 	writeFileSync(envFile, `export const debug = ${debug.toString()};\n`);
 
-	builder.log(`Building serverless function to ${_outputApiServerDir}`);
 	const bundle = await rollup(rollupOptions);
 	if (Array.isArray(rollupOptions.output)) {
 		for (const output of rollupOptions.output) {

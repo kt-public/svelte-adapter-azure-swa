@@ -2,7 +2,7 @@ import { clientRollup } from './rollup-client.js';
 import { serverRollup } from './rollup-server.js';
 import { buildConfig } from './swa-config.js';
 
-/** @type {import('.').default} */
+/** @type {import('./index.js').default} */
 export default function (options = {}) {
 	return {
 		name: 'adapter-azure-swa',

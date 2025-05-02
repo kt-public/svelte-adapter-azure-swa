@@ -13,7 +13,7 @@ const ssrFunctionRoute = `/api/${apiFunctionDir}`;
 
 /**
  * Validate the static web app configuration does not override the minimum config for the adapter to work correctly.
- * @param {import('./types/swa').CustomStaticWebAppConfig} config
+ * @param {import('./types/swa.js').CustomStaticWebAppConfig} config
  * */
 function validateCustomConfig(config) {
 	if (config) {
@@ -27,9 +27,9 @@ function validateCustomConfig(config) {
 }
 
 /**
- * @param {import('./types/swa').CustomStaticWebAppConfig} customStaticWebAppConfig
+ * @param {import('./types/swa.js').CustomStaticWebAppConfig} customStaticWebAppConfig
  * @param {string} appDir
- * @returns {import('./types/swa').StaticWebAppConfig}
+ * @returns {import('./types/swa.js').StaticWebAppConfig}
  */
 export function generateConfig(customStaticWebAppConfig, appDir) {
 	validateCustomConfig(customStaticWebAppConfig);
@@ -38,7 +38,7 @@ export function generateConfig(customStaticWebAppConfig, appDir) {
 		customStaticWebAppConfig.routes = [];
 	}
 
-	/** @type {import('./types/swa').StaticWebAppConfig} */
+	/** @type {import('./types/swa.js').StaticWebAppConfig} */
 	const swaConfig = {
 		...customStaticWebAppConfig,
 		routes: [
