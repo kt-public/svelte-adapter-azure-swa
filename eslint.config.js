@@ -22,5 +22,5 @@ export default ts.config(
 		}
 	},
 	includeIgnoreFile(demoGitignorePath),
-	globalIgnores(['tests/demo/build', 'tests/demo/.svelte-kit'])
+	globalIgnores(['tests/demo/build', 'tests/demo/.svelte-kit', 'tests/demo-old'])
 );
