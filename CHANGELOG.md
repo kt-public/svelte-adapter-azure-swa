@@ -4,9 +4,9 @@
 
 ### Minor Changes
 
-- 9529b17: Migrate to rollup, fix issue with generated sourcemaps on the client.
+- 9529b17: Migrate to rollup, fix issue with generated sourcemaps for the client.
 
-  The adapter was migrated to the `rollup` under the hood, instead of `esbuild`. The [same issue as for the `adapter-node`](https://github.com/sveltejs/kit/issues/10040) was taken into account and resolved.
+  The adapter was migrated to the `rollup` under the hood, instead of the `esbuild`. The [same issue as for the `adapter-node`](https://github.com/sveltejs/kit/issues/10040) was taken into account and resolved.
 
 ### Patch Changes
 

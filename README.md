@@ -9,6 +9,11 @@
 
 The experimental fork of [the original adapter repo](https://github.com/geoffrich/svelte-adapter-azure-swa)
 
+Differences with original adapter:
+
+- `rollup` instead of `esbuild` under the hood
+- Fixed issue with sourcemaps for the client part, so Sentry should be able to work with the result (not tested yet) ([see this issue](https://github.com/sveltejs/kit/issues/10040))
+
 # svelte-adapter-azure-swa
 
 Adapter for Svelte apps that creates an Azure Static Web App, using an Azure function for dynamic server rendering. If your app is purely static, you may be able to use [adapter-static](https://www.npmjs.com/package/@sveltejs/adapter-static) instead.
