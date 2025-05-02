@@ -1,12 +1,18 @@
-# SvelteKit Azure SWA demo
+# sv
 
-This is a repo demonstrating how to use [svelte-adapter-azure-swa](https://www.npmjs.com/package/svelte-adapter-azure-swa) with [SvelteKit](https://kit.svelte.dev/).
+Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
 
-This demo uses the local version of the adapter to make testing unreleased changes easier. In your app, you should install `svelte-adapter-azure-swa` from npm.
+## Creating a project
 
-This demo also uses a custom Azure function to make testing that integration easier. If you do not need a custom Azure function, you do not need the `func/` folder or need to set the `apiDir` option in `svelte.config.js`.
+If you're seeing this, you've probably already done this step. Congrats!
 
-[Deployed demo](https://polite-desert-00b80111e.2.azurestaticapps.net/)
+```bash
+# create a new project in the current directory
+npx sv create
+
+# create a new project in my-app
+npx sv create my-app
+```
 
 ## Developing
 

@@ -1,6 +1,4 @@
-import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import adapter from 'svelte-adapter-azure-swa';
-
 const [major] = process.versions.node.split('.').map(Number);
 let NODE_API_RUNTIME = (process.env.NODE_API_RUNTIME || '').trim();
 console.warn('#'.repeat(100));
@@ -16,9 +14,8 @@ if (
 }
 console.warn(`Using API runtime: ${NODE_API_RUNTIME}`);
 console.warn('#'.repeat(100));
-
+/** @type {import('@sveltejs/kit').Config} */
 const config = {
-	preprocess: vitePreprocess(),
 	kit: {
 		adapter: adapter({
 			apiDir: './func',
