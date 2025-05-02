@@ -16,13 +16,11 @@ const ssrFunctionRoute = `/api/${apiFunctionDir}`;
  * @param {import('./types/swa.js').CustomStaticWebAppConfig} config
  * */
 function validateCustomConfig(config) {
-	if (config) {
-		if ('navigationFallback' in config) {
-			throw new Error('customStaticWebAppConfig cannot override navigationFallback.');
-		}
-		if (config.routes && config.routes.find((route) => route.route === '*')) {
-			throw new Error(`customStaticWebAppConfig cannot override '*' route.`);
-		}
+	if ('navigationFallback' in config) {
+		throw new Error('customStaticWebAppConfig cannot override navigationFallback.');
+	}
+	if (config.routes?.some((route) => route.route === '*')) {
+		throw new Error(`customStaticWebAppConfig cannot override '*' route.`);
 	}
 }
 
@@ -34,9 +32,7 @@ function validateCustomConfig(config) {
 export function generateConfig(customStaticWebAppConfig, appDir) {
 	validateCustomConfig(customStaticWebAppConfig);
 
-	if (!customStaticWebAppConfig.routes) {
-		customStaticWebAppConfig.routes = [];
-	}
+	customStaticWebAppConfig.routes = customStaticWebAppConfig.routes || [];
 
 	/** @type {import('./types/swa.js').StaticWebAppConfig} */
 	const swaConfig = {
