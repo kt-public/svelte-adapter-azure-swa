@@ -61,6 +61,8 @@ function prepareRollupOptions(builder, outDir, tmpDir, options) {
 	const outFile = join(_apiServerDir, apiFunctionDir, apiFunctionFile);
 	const { serverFile, manifestFile, envFile } = getPaths(builder, tmpDir);
 
+	const ignoreWarnCodes = new Set(['THIS_IS_UNDEFINED', 'CIRCULAR_DEPENDENCY', 'SOURCEMAP_ERROR']);
+
 	/** @type RollupOptions */
 	let _options = {
 		input: inFile,
@@ -98,20 +100,12 @@ function prepareRollupOptions(builder, outDir, tmpDir, options) {
 			})
 		],
 		onwarn(warning, handler) {
-			if (warning.code === 'THIS_IS_UNDEFINED') {
-				// Ignore 'this is undefined' warning
+			if (ignoreWarnCodes.has(warning.code)) {
+				// Ignore specific warning codes
 				return;
 			}
 			if (warning.plugin === 'sourcemaps' && warning.code === 'PLUGIN_WARNING') {
 				// Ignore rollup-plugin-sourcemaps warnings
-				return;
-			}
-			if (warning.code === 'SOURCEMAP_ERROR') {
-				// Ignore sourcemap errors
-				return;
-			}
-			if (warning.code === 'CIRCULAR_DEPENDENCY') {
-				// Ignore circular dependency warnings
 				return;
 			}
 			handler(warning);
