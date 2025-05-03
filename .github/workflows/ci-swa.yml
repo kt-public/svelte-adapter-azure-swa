@@ -29,6 +29,7 @@ env:
     npm ci --prefix ./tests/demo &&
     npm exec playwright install --prefix ./tests/demo
   CI: true
+  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
 permissions:
   contents: read # to fetch code (actions/checkout)

@@ -1,9 +1,11 @@
-import { esbuildServer } from './esbuild/server.js';
+import { writeFileSync } from 'fs';
+import { join } from 'path';
+import { apiServerDir, files, getPaths } from './helpers/index.js';
 import { rollupClient } from './rollup/client.js';
 import { rollupServer } from './rollup/server.js';
 import { buildSWAConfig } from './swa-config/index.js';
 
-/** @type {import('./index.js').default} */
+/** @type {import('.').default} */
 export default function (options = {}) {
 	return {
 		name: 'adapter-azure-swa',
@@ -39,14 +41,29 @@ If you want to suppress this error, set allowReservedSwaRoutes to true in your a
 			builder.rimraf(tmpDir);
 			builder.rimraf(outDir);
 
-			// rollup cannot resolve @sentry/sveltekit at the moment for the node environment
-			// So we first rollup the server to a temporary directory
-			// and then esbuild that intermedate file to the final output directory
+			builder.mkdirp(tmpDir);
+
+			if (options.apiDir === undefined) {
+				const _apiServerDir = join(outDir, apiServerDir);
+				builder.log(`Using standard output location for Azure Functions: ${_apiServerDir}`);
+				builder.copy(join(files, 'api'), _apiServerDir);
+			}
+
+			const { serverRelativePath, manifestFile, envFile } = getPaths(builder, tmpDir);
+			const debug = options.debug || false;
+
+			// Write manifest
+			writeFileSync(
+				manifestFile,
+				`export const manifest = ${builder.generateManifest({
+					relativePath: serverRelativePath
+				})};\n`
+			);
+			// Write environment
+			writeFileSync(envFile, `export const debug = ${debug.toString()};\n`);
+
 			await rollupServer(builder, outDir, tmpDir, options);
-			await esbuildServer(builder, outDir, tmpDir, options);
-			// Now rollup the client files
 			await rollupClient(builder, outDir, options);
-			// Now build the staticwebapp.config.json file
 			await buildSWAConfig(builder, outDir, tmpDir, options);
 		}
 	};
