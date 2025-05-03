@@ -83,8 +83,8 @@ function getPaths(builder, outDir, tmpDir) {
  * @returns {RollupOptions}
  */
 function prepareRollupOptions(builder, outDir, tmpDir, options) {
-	// const _apiServerDir = join(tmpDir, apiServerDir); // Intermediate location
-	const _apiServerDir = options.apiDir || join(outDir, apiServerDir); // Output location
+	const _apiServerDir = join(tmpDir, apiServerDir); // Intermediate location
+	// const _apiServerDir = options.apiDir || join(outDir, apiServerDir); // Output location
 	const outFile = join(_apiServerDir, apiFunctionDir, apiFunctionFile);
 	const { serverFile, manifestFile, envFile } = getPaths(builder, outDir, tmpDir);
 
@@ -135,8 +135,8 @@ function prepareRollupOptions(builder, outDir, tmpDir, options) {
  * @param {Options} options
  */
 export async function rollupServer(builder, outDir, tmpDir, options) {
-	const _apiServerDir = options.apiDir || join(outDir, apiServerDir); // Output location
-	// const _apiServerDir = join(tmpDir, apiServerDir); // Intermediate location
+	// const _apiServerDir = options.apiDir || join(outDir, apiServerDir); // Output location
+	const _apiServerDir = join(tmpDir, apiServerDir); // Intermediate location
 	const _apiFunctionDir = join(_apiServerDir, apiFunctionDir);
 	builder.log(`ROLLUP: Building server function to ${_apiFunctionDir}`);
 
