@@ -27,7 +27,8 @@ const _adapterSWA = adapterSWA({
 		platform: {
 			apiRuntime: NODE_API_RUNTIME
 		}
-	}
+	},
+	external: ['@babel/preset-typescript', 'fsevents']
 });
 
 const config = {

@@ -1,6 +1,7 @@
-import { clientRollup } from './rollup-client.js';
-import { serverRollup } from './rollup-server.js';
-import { buildConfig } from './swa-config.js';
+import { esbuildServer } from './esbuild/server.js';
+import { rollupClient } from './rollup/client.js';
+import { rollupServer } from './rollup/server.js';
+import { buildSWAConfig } from './swa-config/index.js';
 
 /** @type {import('./index.js').default} */
 export default function (options = {}) {
@@ -27,13 +28,26 @@ If you want to suppress this error, set allowReservedSwaRoutes to true in your a
 				throw new Error('Conflicting routes detected. Please rename the routes listed above.');
 			}
 
+			if (options.apiDir !== undefined) {
+				builder.log.warn(
+					'If you override the apiDir location, make sure that it is a valid Azure Functions location.'
+				);
+			}
+
 			const tmpDir = builder.getBuildDirectory('adapter-azure-swa');
-			const outputDir = 'build';
+			const outDir = 'build';
 			builder.rimraf(tmpDir);
-			builder.rimraf(outputDir);
-			await serverRollup(builder, outputDir, tmpDir, options);
-			await clientRollup(builder, outputDir, options);
-			await buildConfig(builder, outputDir, tmpDir, options);
+			builder.rimraf(outDir);
+
+			// rollup cannot resolve @sentry/sveltekit at the moment for the node environment
+			// So we first rollup the server to a temporary directory
+			// and then esbuild that intermedate file to the final output directory
+			await rollupServer(builder, outDir, tmpDir, options);
+			await esbuildServer(builder, outDir, tmpDir, options);
+			// Now rollup the client files
+			await rollupClient(builder, outDir, options);
+			// Now build the staticwebapp.config.json file
+			await buildSWAConfig(builder, outDir, tmpDir, options);
 		}
 	};
 }

@@ -1,19 +1,20 @@
 import { writeFileSync } from 'fs';
 import { join } from 'path';
-import { staticClientDir } from './rollup-client.js';
-import { apiFunctionDir } from './rollup-server.js';
+import { apiFunctionDir } from '../constants.js';
+import { staticClientDir } from '../rollup/client.js';
 
 /**
  * @typedef {import('@sveltejs/kit').Builder} Builder
  * @typedef {import('rollup').RollupOptions} RollupOptions
- * @typedef {import('.').Options} Options
+ * @typedef {import('../index.js').Options} Options
+ * @typedef {import('../index.js').StaticWebAppConfig} StaticWebAppConfig
  */
 
 const ssrFunctionRoute = `/api/${apiFunctionDir}`;
 
 /**
  * Validate the static web app configuration does not override the minimum config for the adapter to work correctly.
- * @param {import('./types/swa.js').CustomStaticWebAppConfig} config
+ * @param {import('../types/swa.js').CustomStaticWebAppConfig} config
  * */
 function validateCustomConfig(config) {
 	if ('navigationFallback' in config) {
@@ -25,16 +26,16 @@ function validateCustomConfig(config) {
 }
 
 /**
- * @param {import('./types/swa.js').CustomStaticWebAppConfig} customStaticWebAppConfig
+ * @param {import('../types/swa.js').CustomStaticWebAppConfig} customStaticWebAppConfig
  * @param {string} appDir
- * @returns {import('./types/swa.js').StaticWebAppConfig}
+ * @returns {import('../types/swa.js').StaticWebAppConfig}
  */
 export function generateConfig(customStaticWebAppConfig, appDir) {
 	validateCustomConfig(customStaticWebAppConfig);
 
 	customStaticWebAppConfig.routes = customStaticWebAppConfig.routes || [];
 
-	/** @type {import('./types/swa.js').StaticWebAppConfig} */
+	/** @type {import('../types/swa.js').StaticWebAppConfig} */
 	const swaConfig = {
 		...customStaticWebAppConfig,
 		routes: [
@@ -76,7 +77,7 @@ export function generateConfig(customStaticWebAppConfig, appDir) {
  * @param {string} tmpDir
  * @param {Options} options
  */
-export async function buildConfig(builder, outputDir, tmpDir, options) {
+export async function buildSWAConfig(builder, outputDir, tmpDir, options) {
 	const _outputDir = options.staticDir || join(outputDir, staticClientDir);
 	builder.log(`Writing staticwebapp.config.json to ${_outputDir}`);
 

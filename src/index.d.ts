@@ -4,7 +4,7 @@ import { ClientPrincipal, CustomStaticWebAppConfig } from './types/swa';
 
 export * from './types/swa';
 
-type ExternalOption = (string | RegExp)[] | string | RegExp;
+type ExternalOption = string[];
 
 export type Options = {
 	debug?: boolean;
