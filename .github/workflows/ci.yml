@@ -19,7 +19,6 @@ permissions:
 env:
   DEFAULT_MATRIX_NODE_VERSION: '[20]'
   DEFAULT_CACHE_RESET: false
-  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
 jobs:
   # echo:
