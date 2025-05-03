@@ -7,17 +7,24 @@ import { join, posix } from 'path';
 import { rollup } from 'rollup';
 import sourcemaps from 'rollup-plugin-sourcemaps2';
 import { fileURLToPath } from 'url';
+import { apiFunctionDir, apiFunctionFile, apiServerDir } from '../constants.js';
 
 /**
  * @typedef {import('@sveltejs/kit').Builder} Builder
  * @typedef {import('rollup').RollupOptions} RollupOptions
- * @typedef {import('.').Options} Options
+ * @typedef {import('..').Options} Options
  */
+
+const requiredExternal = [
+	'@azure/functions'
+	// Rollup is not able to resolve these dependencies
+	// '@sentry/sveltekit'
+];
 
 /** @returns {RollupOptions} */
 function defaultRollupOptions() {
 	return {
-		external: ['@azure/functions'],
+		external: requiredExternal,
 		output: {
 			inlineDynamicImports: true,
 			format: 'cjs',
@@ -29,16 +36,15 @@ function defaultRollupOptions() {
 				preferBuiltins: true,
 				browser: false
 			}),
-			commonjs()
+			commonjs({
+				strictRequires: true
+			})
 		]
 	};
 }
 
-const apiServerDir = 'server';
-export const apiFunctionDir = 'sk_render';
-const apiFunctionFile = 'index.js';
-const files = fileURLToPath(new URL('./files', import.meta.url));
-const entry = fileURLToPath(new URL('./entry/index.js', import.meta.url));
+const files = fileURLToPath(new URL('../files', import.meta.url));
+const entry = fileURLToPath(new URL('../entry/index.js', import.meta.url));
 
 /**
  *
@@ -77,7 +83,7 @@ function getPaths(builder, outDir, tmpDir) {
  * @returns {RollupOptions}
  */
 function prepareRollupOptions(builder, outDir, tmpDir, options) {
-	const _apiServerDir = options.apiDir || join(outDir, apiServerDir);
+	const _apiServerDir = join(tmpDir, apiServerDir);
 	const outFile = join(_apiServerDir, apiFunctionDir, apiFunctionFile);
 	const { serverFile, manifestFile, envFile } = getPaths(builder, outDir, tmpDir);
 
@@ -112,13 +118,10 @@ function prepareRollupOptions(builder, outDir, tmpDir, options) {
 		}
 	});
 
-	// add @azure/functions to options.external if not already set - this is needed by the Azure Functiions v4 runtime
-	// We only check strings, if the user is using something else, we assume they know what they are doing
-	if (_options.external === undefined) {
-		_options.external = ['@azure/functions'];
-	} else if (Array.isArray(_options.external) && !_options.external.includes('@azure/functions')) {
-		_options.external.push('@azure/functions');
-	}
+	/** @type {any} */
+	let external = _options.external;
+	external = [...(external || []), ...(options.external || [])];
+	_options.external = external;
 
 	return _options;
 }
@@ -130,9 +133,9 @@ function prepareRollupOptions(builder, outDir, tmpDir, options) {
  * @param {string} tmpDir
  * @param {Options} options
  */
-export async function serverRollup(builder, outDir, tmpDir, options) {
-	const _outputApiServerDir = options.apiDir || join(outDir, apiServerDir);
-	builder.log(`Building serverless function to ${_outputApiServerDir}`);
+export async function rollupServer(builder, outDir, tmpDir, options) {
+	const _outputApiServerDir = join(tmpDir, apiServerDir);
+	builder.log(`Building intermediate serverless function...`);
 
 	const { serverRelativePath, manifestFile, envFile } = getPaths(builder, outDir, tmpDir);
 	const debug = options.debug || false;
@@ -140,13 +143,8 @@ export async function serverRollup(builder, outDir, tmpDir, options) {
 	builder.copy(files, tmpDir);
 
 	const rollupOptions = prepareRollupOptions(builder, outDir, tmpDir, options);
-	const isStandardOutput = options.apiDir === undefined;
 
-	if (!isStandardOutput) {
-		builder.log.warn(
-			'If you override the apiDir location, make sure that it is a valid Azure Functions location.'
-		);
-	} else {
+	if (options.apiDir === undefined) {
 		/** @type any */
 		const output = rollupOptions.output;
 		builder.log(`Using standard output location for Azure Functions: ${output.file}`);
@@ -171,4 +169,7 @@ export async function serverRollup(builder, outDir, tmpDir, options) {
 	} else {
 		await bundle.write(rollupOptions.output);
 	}
+	builder.log.warn("Rollup cannot resolve '@sentry/sveltekit' dependency for the Azure Function.");
+	builder.log.warn("It will be bundled with the following 'esbuild' step.");
+	builder.log.warn('Rollup warnings are not fatal.');
 }

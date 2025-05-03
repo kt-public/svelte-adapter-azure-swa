@@ -9,7 +9,7 @@ import sourcemaps from 'rollup-plugin-sourcemaps2';
 /**
  * @typedef {import('@sveltejs/kit').Builder} Builder
  * @typedef {import('rollup').RollupOptions} RollupOptions
- * @typedef {import('.').Options} Options
+ * @typedef {import('..').Options} Options
  */
 
 /** @returns {RollupOptions} */
@@ -62,7 +62,7 @@ function prepareRollupOptions(builder, outDir, options) {
  * @param {string} outputDir
  * @param {Options} options
  */
-export async function clientRollup(builder, outputDir, options) {
+export async function rollupClient(builder, outputDir, options) {
 	const _outputClientDir = options.staticDir || join(outputDir, staticClientDir);
 
 	builder.log(`Writing prerendered files to ${_outputClientDir}`);

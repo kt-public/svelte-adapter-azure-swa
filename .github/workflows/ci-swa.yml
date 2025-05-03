@@ -28,6 +28,7 @@ env:
     npm ci &&
     npm ci --prefix ./tests/demo &&
     npm exec playwright install --prefix ./tests/demo
+  CI: true
 
 permissions:
   contents: read # to fetch code (actions/checkout)
