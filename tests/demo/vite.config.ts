@@ -15,7 +15,8 @@ export default defineConfig({
 				project: 'svelte-adapter-azure-swa',
 				sourcemaps: {
 					assets: ['./build/**/*', './func/**/*', './.svelte-kit/**/*']
-				}
+				},
+				authToken: process.env.SENTRY_AUTH_TOKEN
 			}
 		}),
 		sveltekit()

@@ -1,25 +1,27 @@
 import alias from '@rollup/plugin-alias';
 import commonjs from '@rollup/plugin-commonjs';
+import json from '@rollup/plugin-json';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
-import { writeFileSync } from 'fs';
 import _ from 'lodash';
-import { join, posix } from 'path';
+import { join } from 'path';
 import { rollup } from 'rollup';
 import sourcemaps from 'rollup-plugin-sourcemaps2';
-import { fileURLToPath } from 'url';
-import { apiFunctionDir, apiFunctionFile, apiServerDir } from '../constants.js';
+import {
+	apiFunctionDir,
+	apiFunctionFile,
+	apiServerDir,
+	entry,
+	getPaths
+} from '../helpers/index.js';
 
 /**
  * @typedef {import('@sveltejs/kit').Builder} Builder
  * @typedef {import('rollup').RollupOptions} RollupOptions
  * @typedef {import('..').Options} Options
+ * @typedef {import('..').StaticWebAppConfig} StaticWebAppConfig
  */
 
-const requiredExternal = [
-	'@azure/functions'
-	// Rollup is not able to resolve these dependencies
-	// '@sentry/sveltekit'
-];
+const requiredExternal = ['@azure/functions'];
 
 /** @returns {RollupOptions} */
 function defaultRollupOptions() {
@@ -38,42 +40,12 @@ function defaultRollupOptions() {
 			}),
 			commonjs({
 				strictRequires: true
-			})
+			}),
+			json()
 		]
 	};
 }
 
-const files = fileURLToPath(new URL('../files', import.meta.url));
-const entry = fileURLToPath(new URL('../entry/index.js', import.meta.url));
-
-/**
- *
- * @param {Builder} builder
- * @param {string} outDir
- * @param {string} tmpDir
- * @returns {{
- *   serverPath: string,
- *   serverFile: string,
- *   serverRelativePath: string,
- *   manifestFile: string,
- *   envFile: string
- * }}
- */
-function getPaths(builder, outDir, tmpDir) {
-	// use posix because of https://github.com/sveltejs/kit/pull/3200
-	const serverPath = builder.getServerDirectory();
-	const serverFile = join(serverPath, 'index.js');
-	const serverRelativePath = posix.relative(tmpDir, builder.getServerDirectory());
-	const manifestFile = join(tmpDir, 'manifest.js');
-	const envFile = join(tmpDir, 'env.js');
-	return {
-		serverPath,
-		serverFile,
-		serverRelativePath,
-		manifestFile,
-		envFile
-	};
-}
 /**
  *
  * @param {Builder} builder
@@ -83,13 +55,17 @@ function getPaths(builder, outDir, tmpDir) {
  * @returns {RollupOptions}
  */
 function prepareRollupOptions(builder, outDir, tmpDir, options) {
-	const _apiServerDir = join(tmpDir, apiServerDir);
+	const _apiServerDir = options.apiDir || join(outDir, apiServerDir);
+
+	const inFile = entry;
 	const outFile = join(_apiServerDir, apiFunctionDir, apiFunctionFile);
-	const { serverFile, manifestFile, envFile } = getPaths(builder, outDir, tmpDir);
+	const { serverFile, manifestFile, envFile } = getPaths(builder, tmpDir);
+
+	const ignoreWarnCodes = new Set(['THIS_IS_UNDEFINED', 'CIRCULAR_DEPENDENCY', 'SOURCEMAP_ERROR']);
 
 	/** @type RollupOptions */
 	let _options = {
-		input: entry,
+		input: inFile,
 		output: {
 			file: outFile
 		},
@@ -107,10 +83,30 @@ function prepareRollupOptions(builder, outDir, tmpDir, options) {
 					{
 						find: 'SERVER',
 						replacement: serverFile
+					},
+					{
+						find: '@sentry/sveltekit',
+						replacement: join(
+							process.cwd(),
+							'node_modules',
+							'@sentry',
+							'sveltekit',
+							'build',
+							'esm',
+							'index.server.js'
+						)
 					}
 				]
 			})
-		]
+		],
+		onwarn(warning, handler) {
+			if (
+				ignoreWarnCodes.has(warning.code) ||
+				(warning.plugin === 'sourcemaps' && warning.code === 'PLUGIN_WARNING')
+			)
+				return;
+			handler(warning);
+		}
 	};
 	_options = _.mergeWith(defaultRollupOptions(), _options, (objValue, srcValue) => {
 		if (Array.isArray(objValue) && Array.isArray(srcValue)) {
@@ -134,32 +130,11 @@ function prepareRollupOptions(builder, outDir, tmpDir, options) {
  * @param {Options} options
  */
 export async function rollupServer(builder, outDir, tmpDir, options) {
-	const _outputApiServerDir = join(tmpDir, apiServerDir);
-	builder.log(`Building intermediate serverless function...`);
-
-	const { serverRelativePath, manifestFile, envFile } = getPaths(builder, outDir, tmpDir);
-	const debug = options.debug || false;
-
-	builder.copy(files, tmpDir);
+	const _apiServerDir = options.apiDir || join(outDir, apiServerDir);
+	const _apiFunctionDir = join(_apiServerDir, apiFunctionDir);
+	builder.log(`ROLLUP: Building server function to ${_apiFunctionDir}`);
 
 	const rollupOptions = prepareRollupOptions(builder, outDir, tmpDir, options);
-
-	if (options.apiDir === undefined) {
-		/** @type any */
-		const output = rollupOptions.output;
-		builder.log(`Using standard output location for Azure Functions: ${output.file}`);
-		builder.copy(join(files, 'api'), _outputApiServerDir);
-	}
-
-	// Write manifest
-	writeFileSync(
-		manifestFile,
-		`export const manifest = ${builder.generateManifest({
-			relativePath: serverRelativePath
-		})};\n`
-	);
-	// Write environment
-	writeFileSync(envFile, `export const debug = ${debug.toString()};\n`);
 
 	const bundle = await rollup(rollupOptions);
 	if (Array.isArray(rollupOptions.output)) {
@@ -169,7 +144,4 @@ export async function rollupServer(builder, outDir, tmpDir, options) {
 	} else {
 		await bundle.write(rollupOptions.output);
 	}
-	builder.log.warn("Rollup cannot resolve '@sentry/sveltekit' dependency for the Azure Function.");
-	builder.log.warn("It will be bundled with the following 'esbuild' step.");
-	builder.log.warn('Rollup warnings are not fatal.');
 }
