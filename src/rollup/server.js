@@ -100,14 +100,11 @@ function prepareRollupOptions(builder, outDir, tmpDir, options) {
 			})
 		],
 		onwarn(warning, handler) {
-			if (ignoreWarnCodes.has(warning.code)) {
-				// Ignore specific warning codes
+			if (
+				ignoreWarnCodes.has(warning.code) ||
+				(warning.plugin === 'sourcemaps' && warning.code === 'PLUGIN_WARNING')
+			)
 				return;
-			}
-			if (warning.plugin === 'sourcemaps' && warning.code === 'PLUGIN_WARNING') {
-				// Ignore rollup-plugin-sourcemaps warnings
-				return;
-			}
 			handler(warning);
 		}
 	};
