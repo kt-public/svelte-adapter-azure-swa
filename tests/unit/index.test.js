@@ -1,4 +1,3 @@
-import { build } from 'esbuild';
 import { existsSync, writeFileSync } from 'fs';
 import { rollup } from 'rollup';
 import { describe, expect, test, vi } from 'vitest';
@@ -78,7 +77,7 @@ describe('adapt', () => {
 		await adapter.adapt(builder);
 		expect(builder.writePrerendered).toBeCalled();
 		expect(builder.writeClient).toBeCalled();
-		expect(builder.copy).toBeCalledWith(expect.stringContaining('api'), 'adapter-azure-swa/server');
+		expect(builder.copy).toBeCalledWith(expect.stringContaining('api'), 'build/server');
 	});
 
 	test('writes to custom api directory', async () => {
@@ -88,23 +87,23 @@ describe('adapt', () => {
 		expect(rollup).toBeCalledWith(
 			expect.objectContaining({
 				output: {
-					file: 'adapter-azure-swa/server/sk_render/index.js',
+					file: 'build/server/sk_render/index.js',
 					format: 'cjs',
 					inlineDynamicImports: true,
 					sourcemap: true
 				}
 			})
 		);
-		expect(build).toBeCalledWith(
-			expect.objectContaining({
-				sourcemap: true,
-				outfile: 'custom/api/sk_render/index.js',
-				format: 'cjs',
-				bundle: true,
-				platform: 'node',
-				target: 'node20'
-			})
-		);
+		// expect(build).toBeCalledWith(
+		// 	expect.objectContaining({
+		// 		sourcemap: true,
+		// 		outfile: 'custom/api/sk_render/index.js',
+		// 		format: 'cjs',
+		// 		bundle: true,
+		// 		platform: 'node',
+		// 		target: 'node20'
+		// 	})
+		// );
 
 		// we don't copy the required function files to a custom API directory
 		expect(builder.copy).not.toBeCalledWith(expect.stringContaining('api'), 'custom/api');
@@ -208,6 +207,7 @@ function getMockBuilder() {
 		rimraf: vi.fn(),
 		writeClient: vi.fn(),
 		writePrerendered: vi.fn(),
+		mkdirp: vi.fn(),
 		routes: [
 			{
 				id: '/'

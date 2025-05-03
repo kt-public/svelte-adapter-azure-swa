@@ -1,24 +1,32 @@
 import alias from '@rollup/plugin-alias';
 import commonjs from '@rollup/plugin-commonjs';
+import json from '@rollup/plugin-json';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
-import { writeFileSync } from 'fs';
 import _ from 'lodash';
-import { join, posix } from 'path';
+import { join, relative } from 'path';
 import { rollup } from 'rollup';
 import sourcemaps from 'rollup-plugin-sourcemaps2';
-import { fileURLToPath } from 'url';
-import { apiFunctionDir, apiFunctionFile, apiServerDir } from '../constants.js';
+import {
+	apiFunctionDir,
+	apiFunctionFile,
+	apiServerDir,
+	entry,
+	getPaths
+} from '../helpers/index.js';
 
 /**
  * @typedef {import('@sveltejs/kit').Builder} Builder
  * @typedef {import('rollup').RollupOptions} RollupOptions
  * @typedef {import('..').Options} Options
+ * @typedef {import('..').StaticWebAppConfig} StaticWebAppConfig
+ * @typedef {import('../helpers/index.js').BundleBuild} BundleBuild
  */
 
 const requiredExternal = [
 	'@azure/functions'
 	// Rollup is not able to resolve these dependencies
 	// '@sentry/sveltekit'
+	// /^@babel\/.*/
 ];
 
 /** @returns {RollupOptions} */
@@ -38,59 +46,41 @@ function defaultRollupOptions() {
 			}),
 			commonjs({
 				strictRequires: true
-			})
+			}),
+			json()
+			// babel({ babelHelpers: 'bundled' })
 		]
 	};
 }
 
-const files = fileURLToPath(new URL('../files', import.meta.url));
-const entry = fileURLToPath(new URL('../entry/index.js', import.meta.url));
-
 /**
  *
  * @param {Builder} builder
  * @param {string} outDir
  * @param {string} tmpDir
- * @returns {{
- *   serverPath: string,
- *   serverFile: string,
- *   serverRelativePath: string,
- *   manifestFile: string,
- *   envFile: string
- * }}
- */
-function getPaths(builder, outDir, tmpDir) {
-	// use posix because of https://github.com/sveltejs/kit/pull/3200
-	const serverPath = builder.getServerDirectory();
-	const serverFile = join(serverPath, 'index.js');
-	const serverRelativePath = posix.relative(tmpDir, builder.getServerDirectory());
-	const manifestFile = join(tmpDir, 'manifest.js');
-	const envFile = join(tmpDir, 'env.js');
-	return {
-		serverPath,
-		serverFile,
-		serverRelativePath,
-		manifestFile,
-		envFile
-	};
-}
-/**
- *
- * @param {Builder} builder
- * @param {string} outDir
- * @param {string} tmpDir
+ * @param {BundleBuild} bundleBuild
  * @param {Options} options
  * @returns {RollupOptions}
  */
-function prepareRollupOptions(builder, outDir, tmpDir, options) {
-	const _apiServerDir = join(tmpDir, apiServerDir); // Intermediate location
-	// const _apiServerDir = options.apiDir || join(outDir, apiServerDir); // Output location
+function prepareRollupOptions(builder, outDir, tmpDir, bundleBuild, options) {
+	if (bundleBuild.target === 'none') {
+		throw new Error("ROLLUP: Bundle target 'none' cannot be used here");
+	}
+	const _apiServerDir =
+		bundleBuild.target === 'output'
+			? options.apiDir || join(outDir, apiServerDir)
+			: join(tmpDir, apiServerDir);
+
+	const inFile =
+		bundleBuild.source === 'source'
+			? entry
+			: join(tmpDir, apiServerDir, apiFunctionDir, apiFunctionFile);
 	const outFile = join(_apiServerDir, apiFunctionDir, apiFunctionFile);
-	const { serverFile, manifestFile, envFile } = getPaths(builder, outDir, tmpDir);
+	const { serverFile, manifestFile, envFile } = getPaths(builder, tmpDir);
 
 	/** @type RollupOptions */
 	let _options = {
-		input: entry,
+		input: inFile,
 		output: {
 			file: outFile
 		},
@@ -108,10 +98,41 @@ function prepareRollupOptions(builder, outDir, tmpDir, options) {
 					{
 						find: 'SERVER',
 						replacement: serverFile
+					},
+					{
+						find: '@sentry/sveltekit',
+						replacement: join(
+							process.cwd(),
+							'node_modules',
+							'@sentry',
+							'sveltekit',
+							'build',
+							'esm',
+							'index.server.js'
+						)
 					}
 				]
 			})
-		]
+		],
+		onwarn(warning, handler) {
+			if (warning.code === 'THIS_IS_UNDEFINED') {
+				// Ignore 'this is undefined' warning
+				return;
+			}
+			if (warning.plugin === 'sourcemaps' && warning.code === 'PLUGIN_WARNING') {
+				// Ignore rollup-plugin-sourcemaps warnings
+				return;
+			}
+			if (warning.code === 'SOURCEMAP_ERROR') {
+				// Ignore sourcemap errors
+				return;
+			}
+			if (warning.code === 'CIRCULAR_DEPENDENCY') {
+				// Ignore circular dependency warnings
+				return;
+			}
+			handler(warning);
+		}
 	};
 	_options = _.mergeWith(defaultRollupOptions(), _options, (objValue, srcValue) => {
 		if (Array.isArray(objValue) && Array.isArray(srcValue)) {
@@ -132,37 +153,22 @@ function prepareRollupOptions(builder, outDir, tmpDir, options) {
  * @param {Builder} builder
  * @param {string} outDir
  * @param {string} tmpDir
+ * @param {BundleBuild} bundleBuild
  * @param {Options} options
  */
-export async function rollupServer(builder, outDir, tmpDir, options) {
-	// const _apiServerDir = options.apiDir || join(outDir, apiServerDir); // Output location
-	const _apiServerDir = join(tmpDir, apiServerDir); // Intermediate location
+export async function rollupServer(builder, outDir, tmpDir, bundleBuild, options) {
+	if (bundleBuild.target === 'none') {
+		builder.log('ROLLUP: Skipping build');
+		return;
+	}
+	const _apiServerDir =
+		bundleBuild.target === 'output'
+			? options.apiDir || join(outDir, apiServerDir)
+			: relative(process.cwd(), join(tmpDir, apiServerDir));
 	const _apiFunctionDir = join(_apiServerDir, apiFunctionDir);
 	builder.log(`ROLLUP: Building server function to ${_apiFunctionDir}`);
 
-	const { serverRelativePath, manifestFile, envFile } = getPaths(builder, outDir, tmpDir);
-	const debug = options.debug || false;
-
-	builder.copy(files, tmpDir);
-
-	const rollupOptions = prepareRollupOptions(builder, outDir, tmpDir, options);
-
-	if (options.apiDir === undefined) {
-		/** @type any */
-		const output = rollupOptions.output;
-		builder.log(`Using standard output location for Azure Functions: ${output.file}`);
-		builder.copy(join(files, 'api'), _apiServerDir);
-	}
-
-	// Write manifest
-	writeFileSync(
-		manifestFile,
-		`export const manifest = ${builder.generateManifest({
-			relativePath: serverRelativePath
-		})};\n`
-	);
-	// Write environment
-	writeFileSync(envFile, `export const debug = ${debug.toString()};\n`);
+	const rollupOptions = prepareRollupOptions(builder, outDir, tmpDir, bundleBuild, options);
 
 	const bundle = await rollup(rollupOptions);
 	if (Array.isArray(rollupOptions.output)) {

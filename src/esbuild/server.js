@@ -1,12 +1,13 @@
 import { build } from 'esbuild';
-import { join } from 'path';
-import { apiFunctionDir, apiFunctionFile, apiServerDir } from '../constants.js';
+import { join, relative } from 'path';
+import { apiFunctionDir, apiFunctionFile, apiServerDir, entry } from '../helpers/index.js';
 
 /**
  * @typedef {import('@sveltejs/kit').Builder} Builder
  * @typedef {import('esbuild').BuildOptions} BuildOptions
  * @typedef {import('..').Options} Options
  * @typedef {import('..').StaticWebAppConfig} StaticWebAppConfig
+ * @typedef {import('../helpers/index.js').BundleBuild} BundleBuild
  */
 
 const requiredExternal = ['@azure/functions'];
@@ -16,14 +17,25 @@ const requiredExternal = ['@azure/functions'];
  * @param {Builder} builder
  * @param {string} outDir
  * @param {string} tmpDir
+ * @param {BundleBuild} bundleBuild
  * @param {Options} options
  */
-export async function esbuildServer(builder, outDir, tmpDir, options) {
-	const _apiServerDir = options.apiDir || join(outDir, apiServerDir);
+export async function esbuildServer(builder, outDir, tmpDir, bundleBuild, options) {
+	if (bundleBuild.target === 'none') {
+		builder.log('ESBUILD: Skipping build');
+		return;
+	}
+	const _apiServerDir =
+		bundleBuild.target === 'output'
+			? options.apiDir || join(outDir, apiServerDir)
+			: relative(process.cwd(), join(tmpDir, apiServerDir));
 	const _apiFunctionDir = join(_apiServerDir, apiFunctionDir);
-	builder.log(`ESBUILD: Re-Building server function to ${_apiFunctionDir}`);
+	builder.log(`ESBUILD: Building server function to ${_apiFunctionDir}`);
 
-	const inFile = join(tmpDir, apiServerDir, apiFunctionDir, apiFunctionFile);
+	const inFile =
+		bundleBuild.source === 'source'
+			? entry
+			: join(tmpDir, apiServerDir, apiFunctionDir, apiFunctionFile);
 	const outFile = join(_apiFunctionDir, apiFunctionFile);
 
 	const apiRuntime = options.customStaticWebAppConfig?.platform?.apiRuntime;

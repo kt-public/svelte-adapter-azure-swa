@@ -1,6 +1,6 @@
 import { writeFileSync } from 'fs';
 import { join } from 'path';
-import { apiFunctionDir } from '../constants.js';
+import { apiFunctionDir } from '../helpers/index.js';
 import { staticClientDir } from '../rollup/client.js';
 
 /**
