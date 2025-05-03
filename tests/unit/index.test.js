@@ -1,4 +1,3 @@
-import { build } from 'esbuild';
 import { existsSync, writeFileSync } from 'fs';
 import { rollup } from 'rollup';
 import { describe, expect, test, vi } from 'vitest';
@@ -95,16 +94,16 @@ describe('adapt', () => {
 				}
 			})
 		);
-		expect(build).toBeCalledWith(
-			expect.objectContaining({
-				sourcemap: true,
-				outfile: 'custom/api/sk_render/index.js',
-				format: 'cjs',
-				bundle: true,
-				platform: 'node',
-				target: 'node20'
-			})
-		);
+		// expect(build).toBeCalledWith(
+		// 	expect.objectContaining({
+		// 		sourcemap: true,
+		// 		outfile: 'custom/api/sk_render/index.js',
+		// 		format: 'cjs',
+		// 		bundle: true,
+		// 		platform: 'node',
+		// 		target: 'node20'
+		// 	})
+		// );
 
 		// we don't copy the required function files to a custom API directory
 		expect(builder.copy).not.toBeCalledWith(expect.stringContaining('api'), 'custom/api');

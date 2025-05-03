@@ -21,10 +21,10 @@ const requiredExternal = ['@azure/functions'];
 export async function esbuildServer(builder, outDir, tmpDir, options) {
 	const _apiServerDir = options.apiDir || join(outDir, apiServerDir);
 	const _apiFunctionDir = join(_apiServerDir, apiFunctionDir);
+	builder.log(`ESBUILD: Re-Building server function to ${_apiFunctionDir}`);
+
 	const inFile = join(tmpDir, apiServerDir, apiFunctionDir, apiFunctionFile);
 	const outFile = join(_apiFunctionDir, apiFunctionFile);
-
-	builder.log(`Re-Building server function to ${_apiFunctionDir}`);
 
 	const apiRuntime = options.customStaticWebAppConfig?.platform?.apiRuntime;
 	const target = apiRuntime?.replace(':', '') || 'node20';

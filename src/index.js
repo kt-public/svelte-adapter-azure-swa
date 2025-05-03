@@ -1,4 +1,3 @@
-import { esbuildServer } from './esbuild/server.js';
 import { rollupClient } from './rollup/client.js';
 import { rollupServer } from './rollup/server.js';
 import { buildSWAConfig } from './swa-config/index.js';
@@ -43,7 +42,7 @@ If you want to suppress this error, set allowReservedSwaRoutes to true in your a
 			// So we first rollup the server to a temporary directory
 			// and then esbuild that intermedate file to the final output directory
 			await rollupServer(builder, outDir, tmpDir, options);
-			await esbuildServer(builder, outDir, tmpDir, options);
+			// await esbuildServer(builder, outDir, tmpDir, options);
 			// Now rollup the client files
 			await rollupClient(builder, outDir, options);
 			// Now build the staticwebapp.config.json file
