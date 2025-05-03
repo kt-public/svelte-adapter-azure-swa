@@ -62,7 +62,7 @@ If you want to suppress this error, set allowReservedSwaRoutes to true in your a
 			// Write environment
 			writeFileSync(envFile, `export const debug = ${debug.toString()};\n`);
 
-			await rollupServer(builder, outDir, tmpDir, { source: 'source', target: 'output' }, options);
+			await rollupServer(builder, outDir, tmpDir, options);
 			await rollupClient(builder, outDir, options);
 			await buildSWAConfig(builder, outDir, tmpDir, options);
 		}

@@ -1,12 +1,5 @@
 import { Builder } from '@sveltejs/kit';
 
-export type BundleBuildTarget = 'output' | 'intermediate' | 'none';
-export type BundleBuildSource = 'source' | 'intermediate';
-export type BundleBuild = {
-	target: BundleBuildTarget;
-	source: BundleBuildSource;
-};
-
 export declare const apiServerDir: string;
 export declare const apiFunctionDir: string;
 export declare const apiFunctionFile: string;

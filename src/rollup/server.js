@@ -3,7 +3,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import _ from 'lodash';
-import { join, relative } from 'path';
+import { join } from 'path';
 import { rollup } from 'rollup';
 import sourcemaps from 'rollup-plugin-sourcemaps2';
 import {
@@ -19,7 +19,6 @@ import {
  * @typedef {import('rollup').RollupOptions} RollupOptions
  * @typedef {import('..').Options} Options
  * @typedef {import('..').StaticWebAppConfig} StaticWebAppConfig
- * @typedef {import('../helpers/index.js').BundleBuild} BundleBuild
  */
 
 const requiredExternal = ['@azure/functions'];
@@ -52,23 +51,13 @@ function defaultRollupOptions() {
  * @param {Builder} builder
  * @param {string} outDir
  * @param {string} tmpDir
- * @param {BundleBuild} bundleBuild
  * @param {Options} options
  * @returns {RollupOptions}
  */
-function prepareRollupOptions(builder, outDir, tmpDir, bundleBuild, options) {
-	if (bundleBuild.target === 'none') {
-		throw new Error("ROLLUP: Bundle target 'none' cannot be used here");
-	}
-	const _apiServerDir =
-		bundleBuild.target === 'output'
-			? options.apiDir || join(outDir, apiServerDir)
-			: join(tmpDir, apiServerDir);
+function prepareRollupOptions(builder, outDir, tmpDir, options) {
+	const _apiServerDir = options.apiDir || join(outDir, apiServerDir);
 
-	const inFile =
-		bundleBuild.source === 'source'
-			? entry
-			: join(tmpDir, apiServerDir, apiFunctionDir, apiFunctionFile);
+	const inFile = entry;
 	const outFile = join(_apiServerDir, apiFunctionDir, apiFunctionFile);
 	const { serverFile, manifestFile, envFile } = getPaths(builder, tmpDir);
 
@@ -147,22 +136,14 @@ function prepareRollupOptions(builder, outDir, tmpDir, bundleBuild, options) {
  * @param {Builder} builder
  * @param {string} outDir
  * @param {string} tmpDir
- * @param {BundleBuild} bundleBuild
  * @param {Options} options
  */
-export async function rollupServer(builder, outDir, tmpDir, bundleBuild, options) {
-	if (bundleBuild.target === 'none') {
-		builder.log('ROLLUP: Skipping build');
-		return;
-	}
-	const _apiServerDir =
-		bundleBuild.target === 'output'
-			? options.apiDir || join(outDir, apiServerDir)
-			: relative(process.cwd(), join(tmpDir, apiServerDir));
+export async function rollupServer(builder, outDir, tmpDir, options) {
+	const _apiServerDir = options.apiDir || join(outDir, apiServerDir);
 	const _apiFunctionDir = join(_apiServerDir, apiFunctionDir);
 	builder.log(`ROLLUP: Building server function to ${_apiFunctionDir}`);
 
-	const rollupOptions = prepareRollupOptions(builder, outDir, tmpDir, bundleBuild, options);
+	const rollupOptions = prepareRollupOptions(builder, outDir, tmpDir, options);
 
 	const bundle = await rollup(rollupOptions);
 	if (Array.isArray(rollupOptions.output)) {
