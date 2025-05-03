@@ -76,5 +76,5 @@ export async function rollupClient(builder, outputDir, options) {
 	const rollupOptions = prepareRollupOptions(builder, outputDir, options);
 	const bundle = await rollup(rollupOptions);
 	assert(!Array.isArray(rollupOptions.output), 'output should not be an array');
-	await bundle.write(rollupOptions.output); //
+	await bundle.write(rollupOptions.output);
 }
