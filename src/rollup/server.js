@@ -22,12 +22,7 @@ import {
  * @typedef {import('../helpers/index.js').BundleBuild} BundleBuild
  */
 
-const requiredExternal = [
-	'@azure/functions'
-	// Rollup is not able to resolve these dependencies
-	// '@sentry/sveltekit'
-	// /^@babel\/.*/
-];
+const requiredExternal = ['@azure/functions'];
 
 /** @returns {RollupOptions} */
 function defaultRollupOptions() {
@@ -48,7 +43,6 @@ function defaultRollupOptions() {
 				strictRequires: true
 			}),
 			json()
-			// babel({ babelHelpers: 'bundled' })
 		]
 	};
 }
@@ -178,7 +172,4 @@ export async function rollupServer(builder, outDir, tmpDir, bundleBuild, options
 	} else {
 		await bundle.write(rollupOptions.output);
 	}
-	builder.log.warn("Rollup cannot resolve '@sentry/sveltekit' dependency for the Azure Function.");
-	builder.log.warn("It will be bundled with the following 'esbuild' step.");
-	builder.log.warn('Rollup warnings are not fatal.');
 }

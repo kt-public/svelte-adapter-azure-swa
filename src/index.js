@@ -62,20 +62,8 @@ If you want to suppress this error, set allowReservedSwaRoutes to true in your a
 			// Write environment
 			writeFileSync(envFile, `export const debug = ${debug.toString()};\n`);
 
-			// rollup cannot resolve @sentry/sveltekit at the moment for the node environment
-			// So we first rollup the server to a temporary directory
-			// and then esbuild that intermedate file to the final output directory
 			await rollupServer(builder, outDir, tmpDir, { source: 'source', target: 'output' }, options);
-			// await esbuildServer(
-			// 	builder,
-			// 	outDir,
-			// 	tmpDir,
-			// 	{ source: 'source', target: 'intermediate' },
-			// 	options
-			// );
-			// Now rollup the client files
 			await rollupClient(builder, outDir, options);
-			// Now build the staticwebapp.config.json file
 			await buildSWAConfig(builder, outDir, tmpDir, options);
 		}
 	};

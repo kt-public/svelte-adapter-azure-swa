@@ -19,9 +19,6 @@ vi.mock('rollup', () => ({
 		})
 	)
 }));
-vi.mock('esbuild', () => ({
-	build: vi.fn(() => Promise.resolve())
-}));
 
 describe('generateConfig', () => {
 	test('no custom config', () => {
