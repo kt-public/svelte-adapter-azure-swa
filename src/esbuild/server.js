@@ -24,7 +24,7 @@ export async function esbuildServer(builder, outDir, tmpDir, options) {
 	const inFile = join(tmpDir, apiServerDir, apiFunctionDir, apiFunctionFile);
 	const outFile = join(_apiFunctionDir, apiFunctionFile);
 
-	builder.log(`Building server function to ${_apiFunctionDir}`);
+	builder.log(`Re-Building server function to ${_apiFunctionDir}`);
 
 	const apiRuntime = options.customStaticWebAppConfig?.platform?.apiRuntime;
 	const target = apiRuntime?.replace(':', '') || 'node20';

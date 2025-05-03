@@ -169,4 +169,7 @@ export async function rollupServer(builder, outDir, tmpDir, options) {
 	} else {
 		await bundle.write(rollupOptions.output);
 	}
+	builder.log.warn("Rollup cannot resolve '@sentry/sveltekit' dependency for the Azure Function.");
+	builder.log.warn("It will be bundled with the following 'esbuild' step.");
+	builder.log.warn('Rollup warnings are not fatal.');
 }
