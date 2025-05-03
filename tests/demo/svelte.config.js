@@ -34,8 +34,8 @@ const _adapterSWA = adapterSWA({
 const config = {
 	preprocess: vitePreprocess(),
 	kit: {
-		// adapter: _adapterNode
-		adapter: process.env.SWA ? _adapterSWA : _adapterNode
+		adapter: _adapterSWA
+		// adapter: process.env.SWA ? _adapterSWA : _adapterNode
 	}
 };
 
