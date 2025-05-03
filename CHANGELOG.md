@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.22.2
+
+### Patch Changes
+
+- e1c942e: Remove esbuild, update rollup settings for azure function to build without issues
+
 ## 0.22.1
 
 ### Patch Changes
