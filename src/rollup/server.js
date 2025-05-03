@@ -3,6 +3,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import _ from 'lodash';
+import assert from 'node:assert';
 import { join } from 'path';
 import { rollup } from 'rollup';
 import sourcemaps from 'rollup-plugin-sourcemaps2';
@@ -137,11 +138,6 @@ export async function rollupServer(builder, outDir, tmpDir, options) {
 	const rollupOptions = prepareRollupOptions(builder, outDir, tmpDir, options);
 
 	const bundle = await rollup(rollupOptions);
-	if (Array.isArray(rollupOptions.output)) {
-		for (const output of rollupOptions.output) {
-			await bundle.write(output);
-		}
-	} else {
-		await bundle.write(rollupOptions.output);
-	}
+	assert(!Array.isArray(rollupOptions.output), 'output should not be an array');
+	await bundle.write(rollupOptions.output);
 }

@@ -1,5 +1,6 @@
 import { globSync } from 'glob';
 import _ from 'lodash';
+import assert from 'node:assert';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { join } from 'path';
@@ -74,11 +75,6 @@ export async function rollupClient(builder, outputDir, options) {
 	builder.log(`ROLLUP: Re-Building client to ${_outputClientDir}`);
 	const rollupOptions = prepareRollupOptions(builder, outputDir, options);
 	const bundle = await rollup(rollupOptions);
-	if (Array.isArray(rollupOptions.output)) {
-		for (const output of rollupOptions.output) {
-			await bundle.write(output);
-		}
-	} else {
-		await bundle.write(rollupOptions.output);
-	}
+	assert(!Array.isArray(rollupOptions.output), 'output should not be an array');
+	await bundle.write(rollupOptions.output);
 }
