@@ -16,9 +16,9 @@ import { apiFunctionDir, apiFunctionFile, apiServerDir } from '../constants.js';
  */
 
 const requiredExternal = [
-	'@azure/functions',
+	'@azure/functions'
 	// Rollup is not able to resolve these dependencies
-	'@sentry/sveltekit'
+	// '@sentry/sveltekit'
 ];
 
 /** @returns {RollupOptions} */
