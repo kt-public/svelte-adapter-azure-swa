@@ -1,5 +1,6 @@
+import adapterNode from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-import adapter from 'svelte-adapter-azure-swa';
+import adapterSWA from 'svelte-adapter-azure-swa';
 
 const [major] = process.versions.node.split('.').map(Number);
 let NODE_API_RUNTIME = (process.env.NODE_API_RUNTIME || '').trim();
@@ -17,17 +18,24 @@ if (
 console.warn(`Using API runtime: ${NODE_API_RUNTIME}`);
 console.warn('#'.repeat(100));
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _adapterNode = adapterNode();
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const _adapterSWA = adapterSWA({
+	apiDir: './func',
+	customStaticWebAppConfig: {
+		platform: {
+			apiRuntime: NODE_API_RUNTIME
+		}
+	},
+	external: ['@babel/preset-typescript', 'fsevents']
+});
+
 const config = {
 	preprocess: vitePreprocess(),
 	kit: {
-		adapter: adapter({
-			apiDir: './func',
-			customStaticWebAppConfig: {
-				platform: {
-					apiRuntime: NODE_API_RUNTIME
-				}
-			}
-		})
+		adapter: _adapterSWA
+		// adapter: process.env.SWA ? _adapterSWA : _adapterNode
 	}
 };
 

@@ -1,3 +1,4 @@
+import { build } from 'esbuild';
 import { existsSync, writeFileSync } from 'fs';
 import { rollup } from 'rollup';
 import { describe, expect, test, vi } from 'vitest';
@@ -18,6 +19,9 @@ vi.mock('rollup', () => ({
 			write: vi.fn(() => Promise.resolve())
 		})
 	)
+}));
+vi.mock('esbuild', () => ({
+	build: vi.fn(() => Promise.resolve())
 }));
 
 describe('generateConfig', () => {
@@ -74,7 +78,7 @@ describe('adapt', () => {
 		await adapter.adapt(builder);
 		expect(builder.writePrerendered).toBeCalled();
 		expect(builder.writeClient).toBeCalled();
-		expect(builder.copy).toBeCalledWith(expect.stringContaining('api'), 'build/server');
+		expect(builder.copy).toBeCalledWith(expect.stringContaining('api'), 'adapter-azure-swa/server');
 	});
 
 	test('writes to custom api directory', async () => {
@@ -84,11 +88,21 @@ describe('adapt', () => {
 		expect(rollup).toBeCalledWith(
 			expect.objectContaining({
 				output: {
-					file: 'custom/api/sk_render/index.js',
+					file: 'adapter-azure-swa/server/sk_render/index.js',
 					format: 'cjs',
 					inlineDynamicImports: true,
 					sourcemap: true
 				}
+			})
+		);
+		expect(build).toBeCalledWith(
+			expect.objectContaining({
+				sourcemap: true,
+				outfile: 'custom/api/sk_render/index.js',
+				format: 'cjs',
+				bundle: true,
+				platform: 'node',
+				target: 'node20'
 			})
 		);
 
