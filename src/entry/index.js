@@ -19,7 +19,6 @@ const initialized = server.init({ env: process.env });
  * @typedef {import('@azure/functions').HttpRequest} HttpRequest
  * @typedef {import('@azure/functions').HttpResponseInit} HttpResponseInit
  * @typedef {BodyInit} ResponseBodyInit
- * @typedef {HeadersInit} ResponseHeadersInit
  */
 
 app.setup({
