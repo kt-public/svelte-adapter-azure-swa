@@ -40,7 +40,8 @@ If you want to suppress this error, set allowReservedSwaRoutes to true in your a
 			const outDir = 'build';
 			builder.rimraf(tmpDir);
 			builder.rimraf(outDir);
-			if (options.cleanApiDir) {
+			const cleanApiDir = options.cleanApiDir ?? true;
+			if (cleanApiDir) {
 				const _apiServerDir = options.apiDir || join(outDir, apiServerDir);
 				const _apiFunctionDir = join(_apiServerDir, apiFunctionDir);
 				builder.rimraf(_apiFunctionDir);
