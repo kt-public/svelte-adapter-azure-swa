@@ -78,7 +78,7 @@ describe('adapt', () => {
 	});
 
 	test('writes to custom api directory', async () => {
-		const adapter = azureAdapter({ apiDir: 'custom/api' });
+		const adapter = azureAdapter({ apiDir: 'custom/api', cleanApiDir: true });
 		const builder = getMockBuilder();
 		await adapter.adapt(builder);
 		expect(rollup).toBeCalledWith(
