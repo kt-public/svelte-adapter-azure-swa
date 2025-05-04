@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.22.3
+
+### Patch Changes
+
+- 157db71: Remove esbuild, update rollup settings for Azure Function to build without issues. Multiple chunks are generated for the Azure Functions - this fixes the issue with size of file and size of sourcemaps. Sentry seem to work, not ideally, but close.
+
 ## 0.22.2
 
 ### Patch Changes
