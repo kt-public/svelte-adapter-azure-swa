@@ -1,6 +1,6 @@
 import { writeFileSync } from 'fs';
 import { join } from 'path';
-import { apiServerDir, files, getPaths } from './helpers/index.js';
+import { apiFunctionDir, apiServerDir, files, getPaths } from './helpers/index.js';
 import { rollupClient } from './rollup/client.js';
 import { rollupServer } from './rollup/server.js';
 import { buildSWAConfig } from './swa-config/index.js';
@@ -40,6 +40,11 @@ If you want to suppress this error, set allowReservedSwaRoutes to true in your a
 			const outDir = 'build';
 			builder.rimraf(tmpDir);
 			builder.rimraf(outDir);
+			if (options.cleanApiDir) {
+				const _apiServerDir = options.apiDir || join(outDir, apiServerDir);
+				const _apiFunctionDir = join(_apiServerDir, apiFunctionDir);
+				builder.rimraf(_apiFunctionDir);
+			}
 
 			builder.mkdirp(tmpDir);
 

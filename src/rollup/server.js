@@ -29,7 +29,7 @@ function defaultRollupOptions() {
 	return {
 		external: requiredExternal,
 		output: {
-			inlineDynamicImports: true,
+			// inlineDynamicImports: true,
 			format: 'cjs',
 			sourcemap: true
 		},
@@ -59,7 +59,8 @@ function prepareRollupOptions(builder, outDir, tmpDir, options) {
 	const _apiServerDir = options.apiDir || join(outDir, apiServerDir);
 
 	const inFile = entry;
-	const outFile = join(_apiServerDir, apiFunctionDir, apiFunctionFile);
+	const _apiFunctionDir = join(_apiServerDir, apiFunctionDir);
+	// const outFile = join(_apiServerDir, apiFunctionDir, apiFunctionFile);
 	const { serverFile, manifestFile, envFile } = getPaths(builder, tmpDir);
 
 	const ignoreWarnCodes = new Set(['THIS_IS_UNDEFINED', 'CIRCULAR_DEPENDENCY', 'SOURCEMAP_ERROR']);
@@ -68,7 +69,8 @@ function prepareRollupOptions(builder, outDir, tmpDir, options) {
 	let _options = {
 		input: inFile,
 		output: {
-			file: outFile
+			dir: _apiFunctionDir,
+			entryFileNames: apiFunctionFile
 		},
 		plugins: [
 			alias({
