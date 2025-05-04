@@ -1,4 +1,3 @@
-import { debug } from 'ENV';
 import * as set_cookie_parser from 'set-cookie-parser';
 
 /**
@@ -50,9 +49,10 @@ export function getClientIPFromHeaders(headers) {
 /**
  * Gets the client principal from `x-ms-client-principal` header.
  * @param {Headers} headers
+ * @param {import('@azure/functions').InvocationContext} context
  * @returns {App.Platform['clientPrincipal']} The client principal
  */
-export function getClientPrincipalFromHeaders(headers) {
+export function getClientPrincipalFromHeaders(headers, context) {
 	// Code adapted from the official SWA documentation
 	// https://learn.microsoft.com/en-us/azure/static-web-apps/user-information?tabs=javascript#api-functions
 	const header = headers.get('x-ms-client-principal');
@@ -67,7 +67,7 @@ export function getClientPrincipalFromHeaders(headers) {
 
 		return clientPrincipal;
 	} catch (e) {
-		if (debug) console.log('Unable to parse client principal:', e);
+		context.error('Unable to parse client principal', e);
 		return null;
 	}
 }
