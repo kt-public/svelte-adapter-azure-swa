@@ -22,7 +22,11 @@ import {
  * @typedef {import('..').StaticWebAppConfig} StaticWebAppConfig
  */
 
-const requiredExternal = ['@azure/functions'];
+const requiredExternal = [
+	'@azure/functions',
+	'@babel/preset-typescript',
+	'@babel/preset-typescript/package.json'
+];
 
 /** @returns {RollupOptions} */
 function defaultRollupOptions() {

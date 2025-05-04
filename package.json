@@ -63,7 +63,6 @@
 		"vitest": "^3.0.0"
 	},
 	"dependencies": {
-		"@babel/preset-typescript": "^7.27.1",
 		"@rollup/plugin-alias": "^5.1.1",
 		"@rollup/plugin-commonjs": "^28.0.3",
 		"@rollup/plugin-json": "^6.1.0",
