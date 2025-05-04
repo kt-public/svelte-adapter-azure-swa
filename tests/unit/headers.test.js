@@ -65,7 +65,7 @@ describe('client ip address detection', () => {
 		headers.append('Location', '/');
 		headers.append('Content-Type', 'application/json');
 
-		const ipAddress = getClientIPFromHeaders(headers);
+		const ipAddress = getClientIPFromHeaders(headers, console);
 
 		expect(ipAddress).toBe('127.0.0.1');
 	});
@@ -113,7 +113,7 @@ describe('client principal parsing', () => {
 	});
 
 	test('returns undefined when there is no client principal', () => {
-		expect(getClientPrincipalFromHeaders(new Headers())).toBeUndefined();
+		expect(getClientPrincipalFromHeaders(new Headers())).toBeNull();
 	});
 
 	test('returns undefined if unable to parse', () => {
@@ -121,6 +121,6 @@ describe('client principal parsing', () => {
 			'x-ms-client-principal': 'boom'
 		});
 
-		expect(getClientPrincipalFromHeaders(headers)).toBeUndefined();
+		expect(getClientPrincipalFromHeaders(headers, console)).toBeNull();
 	});
 });

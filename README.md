@@ -19,6 +19,16 @@ Differences with original adapter:
   - https://github.com/sveltejs/kit/issues/10040
   - https://github.com/getsentry/sentry-javascript/issues/16189
   - https://github.com/getsentry/sentry-javascript/issues/16190
+- Emulator of the platform via `options.emulate`
+
+```ts
+export type EmulateOptions = {
+	role?: EmulateRole;
+	clientPrincipal?: ClientPrincipal | ClientPrincipalWithClaims;
+};
+```
+
+- Something else
 
 # svelte-adapter-azure-swa
 

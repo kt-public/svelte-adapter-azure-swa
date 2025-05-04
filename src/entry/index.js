@@ -47,7 +47,7 @@ app.http('sk_render', {
 		const request = toRequest(httpRequest);
 
 		const ipAddress = getClientIPFromHeaders(request.headers);
-		const clientPrincipal = getClientPrincipalFromHeaders(request.headers);
+		const clientPrincipal = getClientPrincipalFromHeaders(request.headers, context);
 
 		await initialized;
 		const rendered = await server.respond(request, {
@@ -56,7 +56,7 @@ app.http('sk_render', {
 			},
 			platform: {
 				user: httpRequest.user,
-				clientPrincipal,
+				clientPrincipal: clientPrincipal,
 				context
 			}
 		});

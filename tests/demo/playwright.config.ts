@@ -1,15 +1,19 @@
 import { defineConfig, PlaywrightTestConfig } from '@playwright/test';
 
 console.warn('#'.repeat(100));
+console.warn('NODE_ENV: ', process.env.NODE_ENV);
+console.warn('SWA: ', process.env.PUBLIC_SWA);
+console.warn('CI: ', process.env.CI);
+
 let webServer: PlaywrightTestConfig['webServer'];
-if (process.env.SWA) {
+if (process.env.PUBLIC_SWA == 'true') {
 	console.warn('Running in SWA mode');
 	webServer = {
 		timeout: 120 * 1000,
-		command: 'npm run build && npm run swa -- --verbose=silly',
+		command: 'npm run build:swa && npm run swa -- --verbose=silly',
 		port: 4280
 	};
-} else if (process.env.CI) {
+} else if (process.env.CI == 'true') {
 	console.warn('Running in CI mode');
 	webServer = undefined;
 } else {
