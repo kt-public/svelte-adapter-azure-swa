@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.22.6
+
+### Patch Changes
+
+- f6906cc: Issues with using undici classes, revert back to original with type errors in vscode. Check and lint work just fine.
+
 ## 0.22.5
 
 ### Patch Changes
