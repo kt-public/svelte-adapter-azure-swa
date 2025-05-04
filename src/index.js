@@ -44,6 +44,7 @@ If you want to suppress this error, set allowReservedSwaRoutes to true in your a
 			if (cleanApiDir) {
 				const _apiServerDir = options.apiDir || join(outDir, apiServerDir);
 				const _apiFunctionDir = join(_apiServerDir, apiFunctionDir);
+				builder.log(`Cleaning up Azure Functions output directory: ${_apiFunctionDir}`);
 				builder.rimraf(_apiFunctionDir);
 			}
 
