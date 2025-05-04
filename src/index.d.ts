@@ -9,6 +9,7 @@ type ExternalOption = string[];
 export type Options = {
 	debug?: boolean;
 	apiDir?: string;
+	cleanApiDir?: boolean;
 	staticDir?: string;
 	external?: ExternalOption;
 	customStaticWebAppConfig?: CustomStaticWebAppConfig;

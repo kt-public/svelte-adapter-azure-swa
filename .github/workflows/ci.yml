@@ -94,7 +94,7 @@ jobs:
 
   retry-failed:
     runs-on: ubuntu-latest
-    needs: [check, test, ci-swa]
+    needs: [check, test, sonar, ci-swa]
     if: failure() && fromJSON(github.run_attempt) < 2
     permissions:
       actions: write

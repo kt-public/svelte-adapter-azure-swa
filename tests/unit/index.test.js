@@ -78,15 +78,16 @@ describe('adapt', () => {
 	});
 
 	test('writes to custom api directory', async () => {
-		const adapter = azureAdapter({ apiDir: 'custom/api' });
+		const adapter = azureAdapter({ apiDir: 'custom/api', cleanApiDir: true });
 		const builder = getMockBuilder();
 		await adapter.adapt(builder);
 		expect(rollup).toBeCalledWith(
 			expect.objectContaining({
 				output: {
-					file: 'build/server/sk_render/index.js',
+					dir: 'custom/api/sk_render',
+					entryFileNames: 'index.js',
 					format: 'cjs',
-					inlineDynamicImports: true,
+					// inlineDynamicImports: true,
 					sourcemap: true
 				}
 			})

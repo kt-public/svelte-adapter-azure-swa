@@ -9,12 +9,14 @@ export default defineConfig({
 	},
 	plugins: [
 		sentrySvelteKit({
-			adapter: process.env.SWA ? 'other' : 'node',
+			// adapter: process.env.SWA ? 'other' : 'node',
+			adapter: 'other',
 			sourceMapsUploadOptions: {
 				org: 'konstantin-tarmyshov',
 				project: 'svelte-adapter-azure-swa',
 				sourcemaps: {
-					assets: ['./build/**/*', './func/**/*', './.svelte-kit/**/*']
+					// assets: ['./build/**/*', './func/**/*', './src/**/*', '.svelte-kit/**/*']
+					assets: ['./build/**/*', './func/**/*']
 				},
 				authToken: process.env.SENTRY_AUTH_TOKEN
 			}
