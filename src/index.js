@@ -41,11 +41,17 @@ If you want to suppress this error, set allowReservedSwaRoutes to true in your a
 			builder.rimraf(tmpDir);
 			builder.rimraf(outDir);
 			const cleanApiDir = options.cleanApiDir ?? true;
-			if (cleanApiDir) {
-				const _apiServerDir = options.apiDir || join(outDir, apiServerDir);
+			if (cleanApiDir && options.apiDir !== undefined) {
+				const _apiServerDir = options.apiDir;
 				const _apiFunctionDir = join(_apiServerDir, apiFunctionDir);
 				builder.log(`Cleaning up Azure Functions output directory: ${_apiFunctionDir}`);
 				builder.rimraf(_apiFunctionDir);
+			}
+			const cleanStaticDir = options.cleanStaticDir ?? true;
+			if (cleanStaticDir && options.staticDir !== undefined) {
+				const _staticDir = options.staticDir;
+				builder.log(`Cleaning up static output directory: ${_staticDir}`);
+				builder.rimraf(_staticDir);
 			}
 
 			builder.mkdirp(tmpDir);

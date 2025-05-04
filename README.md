@@ -12,7 +12,13 @@ The experimental fork of [the original adapter repo](https://github.com/geoffric
 Differences with original adapter:
 
 - `rollup` instead of `esbuild` under the hood
-- Fixed issue with sourcemaps for the client part, so Sentry should be able to work with the result (not tested yet) ([see this issue](https://github.com/sveltejs/kit/issues/10040))
+  - the output is bundled with chunks, not into one single file, this reduces the total size of the bundle
+  - `customApi/sk_render`, where the server bundle is generated to if custom `apiDir` location is provided is cleaned up. This can be switched off by setting `cleanApiDir` to `false`.
+  - `customStatic`, where the client bundle is generated to if custom `staticDir` location is provided is cleaned up. This can be switched off by setting `cleanStaticDir` to `false`.
+- Fixed issue with sourcemaps, so Sentry should be able to work with the result (not completely tested yet, some of things still don't work perfectly)
+  - https://github.com/sveltejs/kit/issues/10040
+  - https://github.com/getsentry/sentry-javascript/issues/16189
+  - https://github.com/getsentry/sentry-javascript/issues/16190
 
 # svelte-adapter-azure-swa
 
