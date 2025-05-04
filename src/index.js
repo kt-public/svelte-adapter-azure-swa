@@ -1,5 +1,6 @@
 import { writeFileSync } from 'fs';
 import { join } from 'path';
+import { emulatePlatform } from './emulator/index.js';
 import { apiFunctionDir, apiServerDir, files, getPaths } from './helpers/index.js';
 import { rollupClient } from './rollup/client.js';
 import { rollupServer } from './rollup/server.js';
@@ -78,6 +79,13 @@ If you want to suppress this error, set allowReservedSwaRoutes to true in your a
 			await rollupServer(builder, outDir, tmpDir, options);
 			await rollupClient(builder, outDir, options);
 			await buildSWAConfig(builder, outDir, tmpDir, options);
+		},
+		async emulate() {
+			return {
+				platform({ config, prerender }) {
+					return emulatePlatform(config, prerender, options.emulate);
+				}
+			};
 		}
 	};
 }

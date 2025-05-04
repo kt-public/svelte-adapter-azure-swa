@@ -1,10 +1,16 @@
 import { HttpRequestUser, InvocationContext } from '@azure/functions';
 import { Adapter } from '@sveltejs/kit';
-import { ClientPrincipal, CustomStaticWebAppConfig } from './types/swa';
+import { ClientPrincipal, ClientPrincipalWithClaims, CustomStaticWebAppConfig } from './types/swa';
 
 export * from './types/swa';
 
 type ExternalOption = string[];
+
+type EmulateRole = 'anonymous' | 'authenticated';
+export type EmulateOptions = {
+	role?: EmulateRole;
+	clientPrincipal?: ClientPrincipal | ClientPrincipalWithClaims;
+};
 
 export type Options = {
 	debug?: boolean;
@@ -15,6 +21,7 @@ export type Options = {
 	external?: ExternalOption;
 	customStaticWebAppConfig?: CustomStaticWebAppConfig;
 	allowReservedSwaRoutes?: boolean;
+	emulate?: EmulateOptions;
 };
 
 export default function plugin(options?: Options): Adapter;
@@ -44,7 +51,7 @@ declare global {
 
 			user: HttpRequestUser | null;
 
-			clientPrincipal?: ClientPrincipal;
+			clientPrincipal: ClientPrincipal | ClientPrincipalWithClaims | null;
 		}
 	}
 }

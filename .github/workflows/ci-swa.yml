@@ -28,6 +28,7 @@ env:
     npm ci &&
     npm ci --prefix ./tests/demo &&
     npm exec playwright install --prefix ./tests/demo
+  PUBLIC_SWA: false
   CI: true
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 

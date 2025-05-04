@@ -22,6 +22,7 @@ console.warn('#'.repeat(100));
 const _adapterNode = adapterNode();
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _adapterSWA = adapterSWA({
+	external: ['fsevents'],
 	apiDir: './func',
 	// cleanApiDir: true,
 	// staticDir: './customStatic',
@@ -31,7 +32,9 @@ const _adapterSWA = adapterSWA({
 			apiRuntime: NODE_API_RUNTIME
 		}
 	},
-	external: ['fsevents']
+	emulate: {
+		role: 'authenticated'
+	}
 });
 
 const config = {

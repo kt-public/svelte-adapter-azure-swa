@@ -49,24 +49,25 @@ export function getClientIPFromHeaders(headers) {
 /**
  * Gets the client principal from `x-ms-client-principal` header.
  * @param {Headers} headers
- * @returns {import('../types/swa').ClientPrincipal | undefined} The client principal
+ * @param {import('@azure/functions').InvocationContext} context
+ * @returns {App.Platform['clientPrincipal']} The client principal
  */
-export function getClientPrincipalFromHeaders(headers) {
+export function getClientPrincipalFromHeaders(headers, context) {
 	// Code adapted from the official SWA documentation
 	// https://learn.microsoft.com/en-us/azure/static-web-apps/user-information?tabs=javascript#api-functions
 	const header = headers.get('x-ms-client-principal');
 	if (!header) {
-		return undefined;
+		return null;
 	}
 
 	try {
 		const encoded = Buffer.from(header, 'base64');
 		const decoded = encoded.toString('ascii');
-		const clientPrincipal = JSON.parse(decoded);
+		let clientPrincipal = JSON.parse(decoded);
 
 		return clientPrincipal;
 	} catch (e) {
-		console.log('Unable to parse client principal:', e);
-		return undefined;
+		context.error('Unable to parse client principal', e);
+		return null;
 	}
 }
