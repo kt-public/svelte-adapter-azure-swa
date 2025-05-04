@@ -56,7 +56,7 @@ app.http('sk_render', {
 			},
 			platform: {
 				user: httpRequest.user,
-				clientPrincipal,
+				clientPrincipal: clientPrincipal,
 				context
 			}
 		});

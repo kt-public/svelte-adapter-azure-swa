@@ -92,16 +92,6 @@ describe('adapt', () => {
 				}
 			})
 		);
-		// expect(build).toBeCalledWith(
-		// 	expect.objectContaining({
-		// 		sourcemap: true,
-		// 		outfile: 'custom/api/sk_render/index.js',
-		// 		format: 'cjs',
-		// 		bundle: true,
-		// 		platform: 'node',
-		// 		target: 'node20'
-		// 	})
-		// );
 
 		// we don't copy the required function files to a custom API directory
 		expect(builder.copy).not.toBeCalledWith(expect.stringContaining('api'), 'custom/api');
@@ -176,6 +166,30 @@ describe('adapt', () => {
 		const builder = getMockBuilder();
 		builder.routes = null;
 		await expect(adapter.adapt(builder)).resolves.not.toThrow();
+	});
+
+	test('tests emulate authenticated', async () => {
+		const adapter = azureAdapter({
+			apiDir: 'custom/api',
+			cleanApiDir: true,
+			emulate: { role: 'authenticated' }
+		});
+		const emulator = await adapter.emulate();
+		const platform = emulator.platform({}, 'auto');
+		expect(platform.clientPrincipal).toBeDefined();
+		expect(platform.user).toBeDefined();
+	});
+
+	test('tests emulate unauthenticated', async () => {
+		const adapter = azureAdapter({
+			apiDir: 'custom/api',
+			cleanApiDir: true,
+			emulate: { role: 'anonymous' }
+		});
+		const emulator = await adapter.emulate();
+		const platform = emulator.platform({}, 'auto');
+		expect(platform.clientPrincipal).toBeNull();
+		expect(platform.user).toBeNull();
 	});
 });
 
