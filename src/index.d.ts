@@ -11,6 +11,7 @@ export type Options = {
 	apiDir?: string;
 	cleanApiDir?: boolean;
 	staticDir?: string;
+	cleanStaticDir?: boolean;
 	external?: ExternalOption;
 	customStaticWebAppConfig?: CustomStaticWebAppConfig;
 	allowReservedSwaRoutes?: boolean;

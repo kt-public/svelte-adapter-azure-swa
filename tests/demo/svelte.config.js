@@ -24,6 +24,8 @@ const _adapterNode = adapterNode();
 const _adapterSWA = adapterSWA({
 	apiDir: './func',
 	// cleanApiDir: true,
+	// staticDir: './static',
+	// cleanStaticDir: true,
 	customStaticWebAppConfig: {
 		platform: {
 			apiRuntime: NODE_API_RUNTIME

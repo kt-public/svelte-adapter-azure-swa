@@ -60,20 +60,20 @@ function prepareRollupOptions(builder, outDir, options) {
 /**
  *
  * @param {Builder} builder
- * @param {string} outputDir
+ * @param {string} outDir
  * @param {Options} options
  */
-export async function rollupClient(builder, outputDir, options) {
-	const _outputClientDir = options.staticDir || join(outputDir, staticClientDir);
+export async function rollupClient(builder, outDir, options) {
+	const _outDir = options.staticDir || join(outDir, staticClientDir);
 
-	builder.log(`Writing prerendered files to ${_outputClientDir}`);
-	builder.writePrerendered(_outputClientDir);
+	builder.log(`Writing prerendered files to ${_outDir}`);
+	builder.writePrerendered(_outDir);
 
-	builder.log(`Writing client files to ${_outputClientDir}`);
-	builder.writeClient(_outputClientDir);
+	builder.log(`Writing client files to ${_outDir}`);
+	builder.writeClient(_outDir);
 
-	builder.log(`ROLLUP: Re-Building client to ${_outputClientDir}`);
-	const rollupOptions = prepareRollupOptions(builder, outputDir, options);
+	builder.log(`ROLLUP: Re-Building client to ${_outDir}`);
+	const rollupOptions = prepareRollupOptions(builder, outDir, options);
 	const bundle = await rollup(rollupOptions);
 	assert(!Array.isArray(rollupOptions.output), 'output should not be an array');
 	await bundle.write(rollupOptions.output);

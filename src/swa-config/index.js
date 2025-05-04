@@ -101,5 +101,5 @@ export async function buildSWAConfig(builder, outputDir, tmpDir, options) {
 		);
 	}
 
-	writeFileSync(`${outputDir}/staticwebapp.config.json`, JSON.stringify(swaConfig, null, 2));
+	writeFileSync(`${_outputDir}/staticwebapp.config.json`, JSON.stringify(swaConfig, null, 2));
 }
