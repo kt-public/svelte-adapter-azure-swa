@@ -3,7 +3,6 @@ import { installPolyfills } from '@sveltejs/kit/node/polyfills';
 import { debug } from 'ENV';
 import { manifest } from 'MANIFEST';
 import { Server } from 'SERVER';
-import { Headers as HeadersUndici, Request as RequestUndici } from 'undici';
 import {
 	getClientIPFromHeaders,
 	getClientPrincipalFromHeaders,
@@ -19,8 +18,8 @@ const initialized = server.init({ env: process.env });
  * @typedef {import('@azure/functions').InvocationContext} InvocationContext
  * @typedef {import('@azure/functions').HttpRequest} HttpRequest
  * @typedef {import('@azure/functions').HttpResponseInit} HttpResponseInit
- * @typedef {import('undici').BodyInit} ResponseBodyInitUndici
- * @typedef {import('undici').HeadersInit} ResponseHeadersInitUndici
+ * @typedef {BodyInit} ResponseBodyInit
+ * @typedef {HeadersInit} ResponseHeadersInit
  */
 
 app.setup({
@@ -84,13 +83,6 @@ function toRequest(httpRequest) {
 	// this header contains the URL the user requested
 	const originalUrl = httpRequest.headers.get('x-ms-original-url');
 
-	const headers = new HeadersUndici();
-	httpRequest.headers.forEach((value, key) => {
-		if (key !== 'x-ms-original-url') {
-			headers.set(key, value);
-		}
-	});
-
 	// SWA strips content-type headers from empty POST requests, but SK form actions require the header
 	// https://github.com/geoffrich/svelte-adapter-azure-swa/issues/178
 	if (
@@ -98,36 +90,24 @@ function toRequest(httpRequest) {
 		!httpRequest.body &&
 		!httpRequest.headers.get('content-type')
 	) {
-		headers.set('content-type', 'application/x-www-form-urlencoded');
+		httpRequest.headers.set('content-type', 'application/x-www-form-urlencoded');
 	}
 
-	/** @type any */
-	const request = new RequestUndici(originalUrl, {
+	/** @type {Record<string, string>} */
+	const headers = {};
+	httpRequest.headers.forEach((value, key) => {
+		if (key !== 'x-ms-original-url') {
+			headers[key] = value;
+		}
+	});
+
+	return new Request(originalUrl, {
 		method: httpRequest.method,
-		headers,
+		headers: new Headers(headers),
 		body: httpRequest.body,
+		// @ts-expect-error Some issues with undici types, but required by sveltekit
 		duplex: 'half'
 	});
-	return request;
-}
-
-/**
- * Converts a ReadableStream<Uint8Array> to an AsyncIterable<Uint8Array>.
- * @param {ReadableStream<Uint8Array>} stream
- * @returns {AsyncIterable<Uint8Array>}
- */
-function readableStreamToAsyncIterable(stream) {
-	const reader = stream.getReader();
-	return {
-		[Symbol.asyncIterator]() {
-			return {
-				async next() {
-					const { done, value } = await reader.read();
-					return { done, value };
-				}
-			};
-		}
-	};
 }
 
 /**
@@ -137,20 +117,12 @@ function readableStreamToAsyncIterable(stream) {
 function toResponseInit(rendered) {
 	const { headers, cookies } = splitCookiesFromHeaders(rendered.headers);
 
-	/** @type ResponseBodyInitUndici */
-	const bodyInit = rendered.body ? readableStreamToAsyncIterable(rendered.body) : undefined;
-	/** @type ResponseHeadersInitUndici */
-	const headersInit = {};
-	headers.forEach((value, key) => {
-		if (key !== 'set-cookie') {
-			headersInit[key] = value;
-		}
-	});
-
 	return {
 		status: rendered.status,
-		body: bodyInit,
-		headers: headersInit,
+		// @ts-expect-error Some issues with undici types, but required by sveltekit
+		body: rendered.body,
+		// @ts-expect-error Some issues with undici types, but required by sveltekit
+		headers,
 		cookies,
 		enableContentNegotiation: false
 	};

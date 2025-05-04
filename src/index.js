@@ -12,6 +12,7 @@ export default function (options = {}) {
 		name: 'adapter-azure-swa',
 
 		async adapt(builder) {
+			const start = performance.now();
 			const { allowReservedSwaRoutes = false } = options;
 
 			const conflictingRoutes =
@@ -79,6 +80,9 @@ If you want to suppress this error, set allowReservedSwaRoutes to true in your a
 			await rollupServer(builder, outDir, tmpDir, options);
 			await rollupClient(builder, outDir, options);
 			await buildSWAConfig(builder, outDir, tmpDir, options);
+
+			const duration = performance.now() - start;
+			builder.log.success(`built in ${(duration / 1000).toFixed(2)}ms`);
 		},
 		async emulate() {
 			return {
