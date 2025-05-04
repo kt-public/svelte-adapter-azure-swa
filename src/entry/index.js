@@ -18,7 +18,6 @@ const initialized = server.init({ env: process.env });
  * @typedef {import('@azure/functions').InvocationContext} InvocationContext
  * @typedef {import('@azure/functions').HttpRequest} HttpRequest
  * @typedef {import('@azure/functions').HttpResponseInit} HttpResponseInit
- * @typedef {BodyInit} ResponseBodyInit
  */
 
 app.setup({
@@ -104,7 +103,6 @@ function toRequest(httpRequest) {
 		method: httpRequest.method,
 		headers: new Headers(headers),
 		body: httpRequest.body,
-		// @ts-expect-error Some issues with undici types, but required by sveltekit
 		duplex: 'half'
 	});
 }
@@ -118,9 +116,7 @@ function toResponseInit(rendered) {
 
 	return {
 		status: rendered.status,
-		// @ts-expect-error Some issues with undici types, but required by sveltekit
 		body: rendered.body,
-		// @ts-expect-error Some issues with undici types, but required by sveltekit
 		headers,
 		cookies,
 		enableContentNegotiation: false
