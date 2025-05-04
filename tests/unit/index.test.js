@@ -84,9 +84,10 @@ describe('adapt', () => {
 		expect(rollup).toBeCalledWith(
 			expect.objectContaining({
 				output: {
-					file: 'build/server/sk_render/index.js',
+					dir: 'custom/api/sk_render',
+					entryFileNames: 'index.js',
 					format: 'cjs',
-					inlineDynamicImports: true,
+					// inlineDynamicImports: true,
 					sourcemap: true
 				}
 			})
