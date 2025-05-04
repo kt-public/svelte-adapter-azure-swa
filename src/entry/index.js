@@ -103,6 +103,7 @@ function toRequest(httpRequest) {
 		method: httpRequest.method,
 		headers: new Headers(headers),
 		body: httpRequest.body,
+		// This error is shown in vscode but check and lint work fine
 		duplex: 'half'
 	});
 }
@@ -116,7 +117,9 @@ function toResponseInit(rendered) {
 
 	return {
 		status: rendered.status,
+		// This error is shown in vscode but check and lint work fine
 		body: rendered.body,
+		// This error is shown in vscode but check and lint work fine
 		headers,
 		cookies,
 		enableContentNegotiation: false
