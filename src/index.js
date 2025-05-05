@@ -1,7 +1,7 @@
 import { writeFileSync } from 'fs';
 import { join } from 'path';
 import { emulatePlatform } from './emulator/index.js';
-import { apiFunctionDir, apiServerDir, files, getPaths } from './helpers/index.js';
+import { apiFunctionDir, getPaths } from './helpers/index.js';
 import { rollupClient } from './rollup/client.js';
 import { rollupServer } from './rollup/server.js';
 import { buildSWAConfig } from './swa-config/index.js';
@@ -57,12 +57,6 @@ If you want to suppress this error, set allowReservedSwaRoutes to true in your a
 			}
 
 			builder.mkdirp(tmpDir);
-
-			if (options.apiDir === undefined) {
-				const _apiServerDir = join(outDir, apiServerDir);
-				builder.log(`Using standard output location for Azure Functions: ${_apiServerDir}`);
-				builder.copy(join(files, 'api'), _apiServerDir);
-			}
 
 			const { serverRelativePath, manifestFile, envFile } = getPaths(builder, tmpDir);
 			const debug = options.debug || false;

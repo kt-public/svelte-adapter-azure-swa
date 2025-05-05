@@ -22,7 +22,7 @@ console.warn('#'.repeat(100));
 const _adapterNode = adapterNode();
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _adapterSWA = adapterSWA({
-	external: ['fsevents'],
+	external: ['@sentry/sveltekit'],
 	apiDir: './func',
 	// cleanApiDir: true,
 	// staticDir: './customStatic',
