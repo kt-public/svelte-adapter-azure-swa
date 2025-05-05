@@ -1,5 +1,6 @@
 import adapterNode from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import { join } from 'path';
 import adapterSWA from 'svelte-adapter-azure-swa';
 
 const [major] = process.versions.node.split('.').map(Number);
@@ -18,12 +19,32 @@ if (
 console.warn(`Using API runtime: ${NODE_API_RUNTIME}`);
 console.warn('#'.repeat(100));
 
+const ignoreWarnCodes = new Set(['THIS_IS_UNDEFINED', 'CIRCULAR_DEPENDENCY']);
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _adapterNode = adapterNode();
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _adapterSWA = adapterSWA({
-	external: ['@sentry/sveltekit'],
+	// external: ['@sentry/sveltekit'],
+	external: ['@babel/preset-typescript/package.json'],
 	apiDir: './func',
+	alias: {
+		'@sentry/sveltekit': join(
+			process.cwd(),
+			'node_modules/@sentry/sveltekit/build/esm/index.server.js'
+		)
+	},
+	onwarn: (warning, handler) => {
+		if (
+			ignoreWarnCodes.has(warning.code) ||
+			(warning.plugin === 'sourcemaps' && warning.code === 'PLUGIN_WARNING')
+		) {
+			// Ignore this warning
+			return;
+		}
+		// Use default warning handler for all other warnings
+		handler(warning);
+	},
 	// cleanApiDir: true,
 	// staticDir: './customStatic',
 	// cleanStaticDir: true,

@@ -2,7 +2,7 @@
 '@ktarmyshov/svelte-adapter-azure-swa': minor
 ---
 
-Rework bundling as an ES module instead of CJS (increases speed). Rework `options.external`.
+Rework `options.external`.
 
 - `options.external`
   - default: `['fsevents', '@azure/functions']`

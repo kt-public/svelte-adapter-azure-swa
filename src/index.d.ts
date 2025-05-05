@@ -1,5 +1,6 @@
 import { HttpRequestUser, InvocationContext } from '@azure/functions';
 import { Adapter } from '@sveltejs/kit';
+import { WarningHandlerWithDefault } from 'rollup';
 import { ClientPrincipal, ClientPrincipalWithClaims, CustomStaticWebAppConfig } from './types/swa';
 
 export * from './types/swa';
@@ -19,6 +20,8 @@ export type Options = {
 	staticDir?: string;
 	cleanStaticDir?: boolean;
 	external?: ExternalOption;
+	alias?: { [find: string]: string };
+	onwarn?: WarningHandlerWithDefault;
 	addDependencies?: Record<string, string>;
 	customStaticWebAppConfig?: CustomStaticWebAppConfig;
 	allowReservedSwaRoutes?: boolean;

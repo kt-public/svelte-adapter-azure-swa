@@ -1,4 +1,4 @@
-const app = require('@azure/functions').app;
+import { app } from '@azure/functions';
 
 app.http('HelloWorld', {
 	methods: ['GET', 'POST'],

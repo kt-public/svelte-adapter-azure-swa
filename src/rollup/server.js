@@ -32,7 +32,7 @@ function defaultRollupOptions() {
 		external: requiredExternal,
 		output: {
 			// inlineDynamicImports: true,
-			format: 'cjs',
+			format: 'es',
 			sourcemap: true
 		},
 		plugins: [
@@ -42,7 +42,7 @@ function defaultRollupOptions() {
 				browser: false
 			}),
 			commonjs({
-				strictRequires: 'auto'
+				strictRequires: true
 			}),
 			json()
 		]
@@ -74,22 +74,15 @@ function prepareRollupOptions(builder, outDir, tmpDir, options) {
 		},
 		plugins: [
 			alias({
-				entries: [
-					{
-						find: 'ENV',
-						replacement: envFile
-					},
-					{
-						find: 'MANIFEST',
-						replacement: manifestFile
-					},
-					{
-						find: 'SERVER',
-						replacement: serverFile
-					}
-				]
+				entries: {
+					ENV: envFile,
+					MANIFEST: manifestFile,
+					SERVER: serverFile,
+					...options.alias
+				}
 			})
-		]
+		],
+		onwarn: options.onwarn
 	};
 	_options = _.mergeWith(defaultRollupOptions(), _options, (objValue, srcValue) => {
 		if (Array.isArray(objValue) && Array.isArray(srcValue)) {
