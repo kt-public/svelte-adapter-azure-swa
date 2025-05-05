@@ -1,9 +1,7 @@
 {
 	"name": "@ktarmyshov/svelte-adapter-azure-swa",
 	"description": "SvelteKit adapter for Azure Static Web Apps.",
-	"version": "0.21.14",
-	"main": "index.js",
-	"type": "module",
+	"version": "0.23.0",
 	"scripts": {
 		"prepare": "bash ./scripts/npm-link.sh",
 		"build": "npm run gen:swa-conig-ts",
@@ -15,12 +13,16 @@
 		"coverage": "vitest --coverage",
 		"changeset:version": "changeset version && git add --all",
 		"changeset:publish": "changeset publish",
-		"gen:swa-conig-ts": "curl https://json.schemastore.org/staticwebapp.config.json | npx json-schema-to-typescript > ./types/swa-config-gen.d.ts && prettier --write ./types/swa-config-gen.d.ts"
+		"gen:swa-conig-ts": "curl https://json.schemastore.org/staticwebapp.config.json | npx json-schema-to-typescript > ./src/types/swa-config-gen.d.ts && prettier --write ./src/types/swa-config-gen.d.ts"
 	},
+	"main": "./src/index.js",
+	"types": "./src/index.d.ts",
+	"module": "./src/index.js",
+	"type": "module",
 	"exports": {
 		".": {
-			"types": "./index.d.ts",
-			"import": "./index.js"
+			"types": "./src/index.d.ts",
+			"import": "./src/index.js"
 		},
 		"./package.json": "./package.json"
 	},
@@ -44,7 +46,6 @@
 		"@sveltejs/kit": "^2.0.0"
 	},
 	"devDependencies": {
-		"@azure/functions": "^4",
 		"@changesets/cli": "^2.28.1",
 		"@eslint/compat": "^1.2.8",
 		"@eslint/js": "^9.25.1",
@@ -58,18 +59,22 @@
 		"json-schema-to-typescript": "^15.0.4",
 		"npm": "^11.3.0",
 		"prettier": "^3.5.3",
-		"typescript": "^5.0.0",
+		"typescript": "^5.8.3",
 		"typescript-eslint": "^8.31.0",
 		"vitest": "^3.0.0"
 	},
 	"dependencies": {
-		"esbuild": "^0.25.0",
+		"@azure/functions": "^4",
+		"@rollup/plugin-alias": "^5.1.1",
+		"@rollup/plugin-commonjs": "^28.0.3",
+		"@rollup/plugin-json": "^6.1.0",
+		"@rollup/plugin-node-resolve": "^16.0.1",
+		"lodash": "^4.17.21",
+		"rollup": "^4.40.1",
+		"rollup-plugin-sourcemaps2": "^0.5.1",
 		"set-cookie-parser": "^2.6.0"
 	},
 	"files": [
-		"files",
-		"index.js",
-		"index.d.ts",
-		"types"
+		"src"
 	]
 }

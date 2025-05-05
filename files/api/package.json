@@ -1,6 +1,0 @@
-{
-	"main": "sk_render/index.js",
-	"dependencies": {
-		"@azure/functions": "^4"
-	}
-}
