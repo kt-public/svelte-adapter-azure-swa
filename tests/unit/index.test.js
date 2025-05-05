@@ -108,7 +108,7 @@ describe('adapt', () => {
 				output: {
 					dir: 'custom/api/sk_render',
 					entryFileNames: 'index.js',
-					format: 'es',
+					format: 'cjs',
 					// inlineDynamicImports: true,
 					sourcemap: true
 				}

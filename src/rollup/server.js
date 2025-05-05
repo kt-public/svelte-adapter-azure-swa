@@ -32,7 +32,7 @@ function defaultRollupOptions() {
 		external: requiredExternal,
 		output: {
 			// inlineDynamicImports: true,
-			format: 'es',
+			format: 'cjs',
 			sourcemap: true
 		},
 		plugins: [
