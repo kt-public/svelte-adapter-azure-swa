@@ -1,7 +1,7 @@
 {
 	"name": "@ktarmyshov/svelte-adapter-azure-swa",
 	"description": "SvelteKit adapter for Azure Static Web Apps.",
-	"version": "0.22.5",
+	"version": "0.22.6",
 	"scripts": {
 		"prepare": "bash ./scripts/npm-link.sh",
 		"build": "npm run gen:swa-conig-ts",
