@@ -164,6 +164,7 @@ jobs:
           # Overall CI workflow reduced from about 5:00 minutes to about 2:30 minutes
           run-script: |
             npm run build --prefix ./tests/demo
+            cat ./tests/demo/func/package.json
             npm install --prefix ./tests/demo/func
           working-directory: .
 
