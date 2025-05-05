@@ -78,11 +78,11 @@ function prepareRollupOptions(builder, outDir, tmpDir, options) {
 					ENV: envFile,
 					MANIFEST: manifestFile,
 					SERVER: serverFile,
-					...options.alias
+					...options.serverAlias
 				}
 			})
 		],
-		onwarn: options.onwarn
+		onwarn: options.serverOnwarn
 	};
 	_options = _.mergeWith(defaultRollupOptions(), _options, (objValue, srcValue) => {
 		if (Array.isArray(objValue) && Array.isArray(srcValue)) {

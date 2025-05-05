@@ -20,7 +20,6 @@ console.warn(`Using API runtime: ${NODE_API_RUNTIME}`);
 console.warn('#'.repeat(100));
 
 const ignoreWarnCodes = new Set(['THIS_IS_UNDEFINED', 'CIRCULAR_DEPENDENCY']);
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _adapterNode = adapterNode();
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -28,13 +27,13 @@ const _adapterSWA = adapterSWA({
   // TODO: https://github.com/getsentry/sentry-javascript/issues/16190
 	// external: ['@sentry/sveltekit'],
 	external: ['@babel/preset-typescript/package.json'],
-	alias: {
+	serverAlias: {
 		'@sentry/sveltekit': join(
 			process.cwd(),
 			'node_modules/@sentry/sveltekit/build/esm/index.server.js'
 		)
 	},
-	onwarn: (warning, handler) => {
+	serverOnwarn: (warning, handler) => {
 		if (
 			ignoreWarnCodes.has(warning.code) ||
 			(warning.plugin === 'sourcemaps' && warning.code === 'PLUGIN_WARNING')
