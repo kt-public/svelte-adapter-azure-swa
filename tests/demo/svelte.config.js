@@ -20,6 +20,18 @@ console.warn(`Using API runtime: ${NODE_API_RUNTIME}`);
 console.warn('#'.repeat(100));
 
 const ignoreWarnCodes = new Set(['THIS_IS_UNDEFINED', 'CIRCULAR_DEPENDENCY']);
+/** @type {import('svelte-adapter-azure-swa').Options} */
+const serverOnwarn = (warning, handler) => {
+  if (
+    ignoreWarnCodes.has(warning.code) ||
+    (warning.plugin === 'sourcemaps' && warning.code === 'PLUGIN_WARNING')
+  ) {
+    // Ignore this warning
+    return;
+  }
+  // Use default warning handler for all other warnings
+  handler(warning);
+}
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _adapterNode = adapterNode();
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -33,17 +45,7 @@ const _adapterSWA = adapterSWA({
 			'node_modules/@sentry/sveltekit/build/esm/index.server.js'
 		)
 	},
-	serverOnwarn: (warning, handler) => {
-		if (
-			ignoreWarnCodes.has(warning.code) ||
-			(warning.plugin === 'sourcemaps' && warning.code === 'PLUGIN_WARNING')
-		) {
-			// Ignore this warning
-			return;
-		}
-		// Use default warning handler for all other warnings
-		handler(warning);
-	},
+	serverOnwarn,
 	apiDir: './func',
 	// cleanApiDir: true,
 	// staticDir: './customStatic',
