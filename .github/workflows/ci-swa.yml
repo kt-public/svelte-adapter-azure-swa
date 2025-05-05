@@ -158,8 +158,10 @@ jobs:
           cache-additional-path: ${{ needs.config.outputs.cache-additional-path }}
           # Run the build script and install the dependencies for the built api of the demo app
           # We build the app ourselves, otherwise the azure swa action will build it for us and it will take a very long time
-          # For example: with build ourselves it takes about 1:30 minutes to build and deploy
-          # With azure swa action it takes about 3:50 minutes to build and deploy
+          # For example: with build ourselves it takes about 1:30-2:00 minutes to build and deploy
+          # With azure swa action it takes about 3:50 (or longer) minutes to build and deploy
+          # Additionally, the azure swa action will occasionaly fail on determining the environment step (this step takes a long time)
+          # Overall CI workflow reduced from about 5:00 minutes to about 2:30 minutes
           run-script: |
             npm run build --prefix ./tests/demo
             npm install --prefix ./tests/demo/func
