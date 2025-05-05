@@ -156,6 +156,10 @@ jobs:
           cache-reset: ${{ inputs.cache-reset }}
           install-script: ${{ needs.config.outputs.install-script }}
           cache-additional-path: ${{ needs.config.outputs.cache-additional-path }}
+          # Run the build script and install the dependencies for the built api of the demo app
+          run-script: |
+            npm run build --prefix ./tests/demo
+            npm install --prefix ./tests/demo/func
           working-directory: .
 
       - uses: ./.github/actions/static-web-apps-deploy-wrapper
@@ -170,6 +174,8 @@ jobs:
           app_location: './tests/demo' # App source code path
           api_location: './tests/demo/func' # Api source code path - optional
           output_location: 'build/static' # Built app content directory - optional
+          skip_app_build: true
+          skip_api_build: true
           ###### End of Repository/Build Configurations ######
 
       - run: npm test --prefix ./tests/demo
