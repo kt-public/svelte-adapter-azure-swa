@@ -171,9 +171,9 @@ jobs:
           action: 'upload'
           ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: './tests/demo' # App source code path
+          app_location: './tests/demo/build' # App source code path
           api_location: './tests/demo/func' # Api source code path - optional
-          output_location: 'build/static' # Built app content directory - optional
+          output_location: 'static' # Built app content directory - optional
           skip_app_build: true
           skip_api_build: true
           ###### End of Repository/Build Configurations ######

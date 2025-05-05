@@ -82,7 +82,7 @@ If you want to suppress this error, set allowReservedSwaRoutes to true in your a
 			await buildSWAConfig(builder, outDir, tmpDir, options);
 
 			const duration = performance.now() - start;
-			builder.log.success(`built in ${(duration / 1000).toFixed(2)}ms`);
+			builder.log.success(`built in ${(duration / 1000).toFixed(2)}s`);
 		},
 		async emulate() {
 			return {
