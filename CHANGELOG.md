@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.23.0
+
+### Minor Changes
+
+- d3e8a8e: Rework bundling as ES module & `options.external`.
+
+  - `options.external`
+    - default: `['fsevents', '@azure/functions']`
+    - other externals, if `apiDir` is not provided, will be automatically added to the generated Azure Functions `package.json`
+    - if `apiDir` is provided, the user must take care of defining dependencies in the corresponding `package.json`
+
+### Patch Changes
+
+- 449ca6a: dependabot: directory '/', update @changesets/cli
+- 449ca6a: dependabot: directory '/', update @vitest/coverage-istanbul
+- 449ca6a: dependabot: directory '/', update typescript-eslint
+- 449ca6a: dependabot: directory '/', update vite
+- 449ca6a: dependabot: directory '/', update vitest
+
 ## 0.22.6
 
 ### Patch Changes
