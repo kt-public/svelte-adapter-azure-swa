@@ -23,9 +23,43 @@ Differences with original adapter:
 
 ```ts
 export type EmulateOptions = {
-	role?: EmulateRole;
+	role?: EmulateRole; // 'authenticated' | 'anonymous'. For 'authenticated' demo user will be created automatically
 	clientPrincipal?: ClientPrincipal | ClientPrincipalWithClaims;
 };
+```
+
+- `options.external`
+  - default: `['fsevents', '@azure/functions']`
+  - other externals, if `apiDir` is not provided, will be automatically added to the generated Azure Functions `package.json`
+- `options.serverAlias`
+  - In some cases the rollup is not able to resolve the dependency properly (for the server) (e.g. `@sentry/sveltekit`)
+  - You may want to provide alias resolution
+
+```js
+'@sentry/sveltekit': join(
+			process.cwd(),
+			'node_modules/@sentry/sveltekit/build/esm/index.server.js'
+		)
+```
+
+- `options.serverOnwarn: RollupOptions['onwarn']`
+  - Same if you may receive too many warnings, that you want to ignore, you can add ignore functionality here
+
+```js
+const ignoreWarnCodes = new Set(['THIS_IS_UNDEFINED', 'CIRCULAR_DEPENDENCY']);
+const _adapterSWA = adapterSWA({
+	serverOnwarn: (warning, handler) => {
+		if (
+			ignoreWarnCodes.has(warning.code) ||
+			(warning.plugin === 'sourcemaps' && warning.code === 'PLUGIN_WARNING')
+		) {
+			// Ignore this warning
+			return;
+		}
+		// Use default warning handler for all other warnings
+		handler(warning);
+	}
+});
 ```
 
 - Something else
@@ -348,3 +382,7 @@ Azure has its share of surprising or quirky behaviors. Here is an evolving list 
 > Azure silently strips the `content-type` header from requests that have no body.
 >
 > [SvelteKit form actions](https://kit.svelte.dev/docs/form-actions) are valid with no parameters, which can lead to `POST` requests that have an empty body. Unfortunately, [Azure deletes the `content-type` header when the request has an empty body](https://github.com/geoffrich/svelte-adapter-azure-swa/issues/178), which breaks SvelteKit's logic for handling form actions. Until [this is addressed by Azure](https://github.com/Azure/static-web-apps/issues/1512), update to [verson 0.20.1](https://github.com/geoffrich/svelte-adapter-azure-swa/releases/tag/v0.20.1) which contains a workaround for this behavior.
+
+```
+
+```

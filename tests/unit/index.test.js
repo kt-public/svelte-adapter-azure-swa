@@ -74,7 +74,29 @@ describe('adapt', () => {
 		await adapter.adapt(builder);
 		expect(builder.writePrerendered).toBeCalled();
 		expect(builder.writeClient).toBeCalled();
-		expect(builder.copy).toBeCalledWith(expect.stringContaining('api'), 'build/server');
+		expect(builder.copy).toBeCalledWith(
+			expect.stringContaining('api'),
+			'build/server',
+			expect.anything()
+		);
+		expect(builder.copy).toBeCalledWith(
+			expect.stringContaining('api'),
+			'build/server/package.json'
+		);
+	});
+
+	test('runs with externals', async () => {
+		const adapter = azureAdapter({ external: ['@azure/functions'] });
+		const builder = getMockBuilder();
+		await adapter.adapt(builder);
+		expect(builder.writePrerendered).toBeCalled();
+		expect(builder.writeClient).toBeCalled();
+		expect(builder.copy).toBeCalledWith(
+			expect.stringContaining('api'),
+			'build/server',
+			expect.anything()
+		);
+		expect(builder.copy).toBeCalledTimes(1);
 	});
 
 	test('writes to custom api directory', async () => {
@@ -86,7 +108,7 @@ describe('adapt', () => {
 				output: {
 					dir: 'custom/api/sk_render',
 					entryFileNames: 'index.js',
-					format: 'cjs',
+					format: 'es',
 					// inlineDynamicImports: true,
 					sourcemap: true
 				}

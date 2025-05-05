@@ -1,5 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const { app } = require('@azure/functions');
+import { app } from '@azure/functions';
 
 app.http('HelloWorld', {
 	methods: ['GET', 'POST'],
