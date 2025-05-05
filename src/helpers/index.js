@@ -4,7 +4,8 @@ import { fileURLToPath } from 'url';
 export const apiServerDir = 'server';
 export const apiFunctionDir = 'sk_render';
 export const apiFunctionFile = 'index.js';
-export const files = fileURLToPath(new URL('../files', import.meta.url));
+const files = fileURLToPath(new URL('../files', import.meta.url));
+export const filesApi = join(files, 'api');
 export const entry = fileURLToPath(new URL('../entry/index.js', import.meta.url));
 
 /** @type {import('.').getPaths} */

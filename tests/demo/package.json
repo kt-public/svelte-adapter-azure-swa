@@ -4,7 +4,7 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-    "sync": "svelte-kit sync || echo ''",
+		"sync": "svelte-kit sync || echo ''",
 		"dev": "vite dev",
 		"build": "VITE_COVERAGE=true npm run sync && vite build",
 		"build:swa": "PUBLIC_SWA=true npm run build",

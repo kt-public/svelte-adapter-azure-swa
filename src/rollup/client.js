@@ -72,12 +72,6 @@ export async function rollupClient(builder, outDir, options) {
 	builder.log(`Writing client files to ${_outDir}`);
 	builder.writeClient(_outDir);
 
-	const rebuildClient = options.rebuildClient ?? true;
-	if (!rebuildClient) {
-		builder.log('Skipping client re-build');
-		return;
-	}
-
 	builder.log(`ROLLUP: Re-Building client to ${_outDir}`);
 	const rollupOptions = prepareRollupOptions(builder, outDir, options);
 	const bundle = await rollup(rollupOptions);
