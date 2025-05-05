@@ -20,10 +20,13 @@ Differences with original adapter:
   - https://github.com/getsentry/sentry-javascript/issues/16189
   - https://github.com/getsentry/sentry-javascript/issues/16190
 - Emulator of the platform via `options.emulate`
+- `options.external`
+  - default: `['fsevents', '@azure/functions']`
+  - other externals, if `apiDir` is not provided, will be automatically added to the generated Azure Functions `package.json`
 
 ```ts
 export type EmulateOptions = {
-	role?: EmulateRole;
+	role?: EmulateRole; // 'authenticated' | 'anonymous'. For 'authenticated' demo user will be created automatically
 	clientPrincipal?: ClientPrincipal | ClientPrincipalWithClaims;
 };
 ```
