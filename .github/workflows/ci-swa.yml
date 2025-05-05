@@ -157,6 +157,9 @@ jobs:
           install-script: ${{ needs.config.outputs.install-script }}
           cache-additional-path: ${{ needs.config.outputs.cache-additional-path }}
           # Run the build script and install the dependencies for the built api of the demo app
+          # We build the app ourselves, otherwise the azure swa action will build it for us and it will take a very long time
+          # For example: with build ourselves it takes about 1:30 minutes to build and deploy
+          # With azure swa action it takes about 3:50 minutes to build and deploy
           run-script: |
             npm run build --prefix ./tests/demo
             npm install --prefix ./tests/demo/func
