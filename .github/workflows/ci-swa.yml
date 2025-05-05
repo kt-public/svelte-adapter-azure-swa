@@ -165,7 +165,7 @@ jobs:
           run-script: |
             npm run build --prefix ./tests/demo
             cat ./tests/demo/func/package.json
-            npm install --prefix ./tests/demo/func
+            npm install --omit=dev --prefix ./tests/demo/func
           working-directory: .
 
       - uses: ./.github/actions/static-web-apps-deploy-wrapper
