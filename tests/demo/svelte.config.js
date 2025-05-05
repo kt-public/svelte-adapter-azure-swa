@@ -25,9 +25,9 @@ const ignoreWarnCodes = new Set(['THIS_IS_UNDEFINED', 'CIRCULAR_DEPENDENCY']);
 const _adapterNode = adapterNode();
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _adapterSWA = adapterSWA({
+  // TODO: https://github.com/getsentry/sentry-javascript/issues/16190
 	// external: ['@sentry/sveltekit'],
 	external: ['@babel/preset-typescript/package.json'],
-	apiDir: './func',
 	alias: {
 		'@sentry/sveltekit': join(
 			process.cwd(),
@@ -45,6 +45,7 @@ const _adapterSWA = adapterSWA({
 		// Use default warning handler for all other warnings
 		handler(warning);
 	},
+	apiDir: './func',
 	// cleanApiDir: true,
 	// staticDir: './customStatic',
 	// cleanStaticDir: true,
