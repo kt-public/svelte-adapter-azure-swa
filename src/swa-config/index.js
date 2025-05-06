@@ -1,7 +1,5 @@
 import { writeFileSync } from 'fs';
-import { join } from 'path';
-import { apiFunctionDir } from '../helpers/index.js';
-import { staticClientDir } from '../rollup/client.js';
+import { SERVER_FUNC_DIR_NAME } from '../constants.js';
 
 /**
  * @typedef {import('@sveltejs/kit').Builder} Builder
@@ -10,7 +8,7 @@ import { staticClientDir } from '../rollup/client.js';
  * @typedef {import('../index.js').StaticWebAppConfig} StaticWebAppConfig
  */
 
-const ssrFunctionRoute = `/api/${apiFunctionDir}`;
+const SSR_FUNC_ROUTE = `/api/${SERVER_FUNC_DIR_NAME}`;
 
 /**
  * Validate the static web app configuration does not override the minimum config for the adapter to work correctly.
@@ -49,7 +47,7 @@ export function generateConfig(customStaticWebAppConfig, appDir) {
 			{
 				route: '*',
 				methods: ['POST', 'PUT', 'DELETE'],
-				rewrite: ssrFunctionRoute
+				rewrite: SSR_FUNC_ROUTE
 			},
 			{
 				route: `/${appDir}/immutable/*`,
@@ -59,7 +57,7 @@ export function generateConfig(customStaticWebAppConfig, appDir) {
 			}
 		],
 		navigationFallback: {
-			rewrite: ssrFunctionRoute
+			rewrite: SSR_FUNC_ROUTE
 		},
 		platform: {
 			apiRuntime: 'node:20',
@@ -73,13 +71,11 @@ export function generateConfig(customStaticWebAppConfig, appDir) {
 /**
  *
  * @param {Builder} builder
- * @param {string} outputDir
- * @param {string} tmpDir
+ * @param {string} outDir
  * @param {Options} options
  */
-export async function buildSWAConfig(builder, outputDir, tmpDir, options) {
-	const _outputDir = options.staticDir || join(outputDir, staticClientDir);
-	builder.log(`Writing staticwebapp.config.json to ${_outputDir}`);
+export async function writeSWAConfig(builder, outDir, options) {
+	builder.log(`Writing staticwebapp.config.json to ${outDir}`);
 
 	let swaConfig = options.customStaticWebAppConfig || {};
 	swaConfig = generateConfig(swaConfig, builder.config.kit.appDir);
@@ -88,18 +84,18 @@ export async function buildSWAConfig(builder, outputDir, tmpDir, options) {
 		// Azure SWA requires an index.html to be present
 		// If the root was not pre-rendered, add a placeholder index.html
 		// Route all requests for the index to the SSR function
-		writeFileSync(`${_outputDir}/index.html`, '');
+		writeFileSync(`${outDir}/index.html`, '');
 		swaConfig.routes.push(
 			{
 				route: '/index.html',
-				rewrite: ssrFunctionRoute
+				rewrite: SSR_FUNC_ROUTE
 			},
 			{
 				route: '/',
-				rewrite: ssrFunctionRoute
+				rewrite: SSR_FUNC_ROUTE
 			}
 		);
 	}
 
-	writeFileSync(`${_outputDir}/staticwebapp.config.json`, JSON.stringify(swaConfig, null, 2));
+	writeFileSync(`${outDir}/staticwebapp.config.json`, JSON.stringify(swaConfig, null, 2));
 }

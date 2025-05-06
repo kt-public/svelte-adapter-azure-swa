@@ -1,6 +1,6 @@
 import { HttpRequestUser, InvocationContext } from '@azure/functions';
 import { Adapter } from '@sveltejs/kit';
-import { RollupOptions } from './swa-config';
+import { RollupOptions } from 'rollup';
 import { ClientPrincipal, ClientPrincipalWithClaims, CustomStaticWebAppConfig } from './types/swa';
 
 export * from './types/swa';
@@ -13,6 +13,8 @@ export type EmulateOptions = {
 	clientPrincipal?: ClientPrincipal | ClientPrincipalWithClaims;
 };
 
+type AdjustRollupInputOptionsFunction = (options: RollupOptions) => RollupOptions;
+
 export type Options = {
 	debug?: boolean;
 	apiDir?: string;
@@ -20,12 +22,11 @@ export type Options = {
 	staticDir?: string;
 	cleanStaticDir?: boolean;
 	external?: ExternalOption;
-	serverAlias?: { [find: string]: string };
-	serverOnwarn?: RollupOptions['onwarn'];
-	addDependencies?: Record<string, string>;
 	customStaticWebAppConfig?: CustomStaticWebAppConfig;
 	allowReservedSwaRoutes?: boolean;
 	emulate?: EmulateOptions;
+	// Advanced options
+	serverRollup?: AdjustRollupInputOptionsFunction;
 };
 
 export default function plugin(options?: Options): Adapter;

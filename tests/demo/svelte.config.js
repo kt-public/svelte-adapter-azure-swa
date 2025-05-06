@@ -1,6 +1,5 @@
 import adapterNode from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
-import { join } from 'path';
 import adapterSWA from 'svelte-adapter-azure-swa';
 
 const [major] = process.versions.node.split('.').map(Number);
@@ -36,15 +35,7 @@ const serverOnwarn = (warning, handler) => {
 const _adapterNode = adapterNode();
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _adapterSWA = adapterSWA({
-	// TODO: https://github.com/getsentry/sentry-javascript/issues/16190
-	// external: ['@sentry/sveltekit'],
-	external: ['@babel/preset-typescript/package.json', '@sentry/sveltekit'],
-	serverAlias: {
-		'@sentry/sveltekit': join(
-			process.cwd(),
-			'node_modules/@sentry/sveltekit/build/esm/index.server.js'
-		)
-	},
+	external: ['@sentry/sveltekit'],
 	serverOnwarn,
 	apiDir: './func',
 	// cleanApiDir: true,

@@ -1,10 +1,12 @@
-import { writeFileSync } from 'fs';
-import { join } from 'path';
+import { bundleClient } from './client/index.js';
+import {
+	CLIENT_DEFAULT_OUT_DIR_PATH,
+	DEFAULT_OUT_DIR_PATH,
+	SERVER_DEFAULT_OUT_DIR_PATH
+} from './constants.js';
 import { emulatePlatform } from './emulator/index.js';
-import { apiFunctionDir, getPaths } from './helpers/index.js';
-import { rollupClient } from './rollup/client.js';
-import { rollupServer } from './rollup/server.js';
-import { buildSWAConfig } from './swa-config/index.js';
+import { bundleServer } from './server/index.js';
+import { writeSWAConfig } from './swa-config/index.js';
 
 /** @type {import('.').default} */
 export default function (options = {}) {
@@ -32,6 +34,7 @@ If you want to suppress this error, set allowReservedSwaRoutes to true in your a
 				throw new Error('Conflicting routes detected. Please rename the routes listed above.');
 			}
 
+			builder.rimraf(DEFAULT_OUT_DIR_PATH);
 			if (options.apiDir !== undefined) {
 				builder.log.warn(
 					'If you override the apiDir location, make sure that it is a valid Azure Functions location.'
@@ -39,41 +42,23 @@ If you want to suppress this error, set allowReservedSwaRoutes to true in your a
 			}
 
 			const tmpDir = builder.getBuildDirectory('adapter-azure-swa');
-			const outDir = 'build';
 			builder.rimraf(tmpDir);
-			builder.rimraf(outDir);
-			const cleanApiDir = options.cleanApiDir ?? true;
-			if (cleanApiDir && options.apiDir !== undefined) {
-				const _apiServerDir = options.apiDir;
-				const _apiFunctionDir = join(_apiServerDir, apiFunctionDir);
-				builder.log(`Cleaning up Azure Functions output directory: ${_apiFunctionDir}`);
-				builder.rimraf(_apiFunctionDir);
-			}
+			builder.mkdirp(tmpDir);
+
+			const apiOutDirPath = options.apiDir ?? SERVER_DEFAULT_OUT_DIR_PATH;
+			await bundleServer(builder, apiOutDirPath, tmpDir, options);
+
+			const clientOutDirPath = options.staticDir ?? CLIENT_DEFAULT_OUT_DIR_PATH;
+			await bundleClient(builder, clientOutDirPath, options);
+
 			const cleanStaticDir = options.cleanStaticDir ?? true;
-			if (cleanStaticDir && options.staticDir !== undefined) {
+			if (options.staticDir !== undefined && cleanStaticDir) {
 				const _staticDir = options.staticDir;
 				builder.log(`Cleaning up static output directory: ${_staticDir}`);
 				builder.rimraf(_staticDir);
 			}
 
-			builder.mkdirp(tmpDir);
-
-			const { serverRelativePath, manifestFile, envFile } = getPaths(builder, tmpDir);
-			const debug = options.debug || false;
-
-			// Write manifest
-			writeFileSync(
-				manifestFile,
-				`export const manifest = ${builder.generateManifest({
-					relativePath: serverRelativePath
-				})};\n`
-			);
-			// Write environment
-			writeFileSync(envFile, `export const debug = ${debug.toString()};\n`);
-
-			await rollupServer(builder, outDir, tmpDir, options);
-			await rollupClient(builder, outDir, options);
-			await buildSWAConfig(builder, outDir, tmpDir, options);
+			await writeSWAConfig(builder, clientOutDirPath, options);
 
 			const duration = performance.now() - start;
 			builder.log.success(`built in ${(duration / 1000).toFixed(2)}s`);
