@@ -1,6 +1,7 @@
 {
 	"type": "module",
 	"main": "sk_render/index.js",
+	"module": "sk_render/index.js",
 	"dependencies": {
 		"@azure/functions": "^4"
 	}
