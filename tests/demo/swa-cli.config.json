@@ -3,12 +3,12 @@
 		"app": {
 			"appLocation": ".",
 			"outputLocation": "./build/static",
-			"apiLocation": "./build/server"
+			"apiLocation": "./func"
 		},
 		"app2": {
 			"appLocation": ".",
 			"outputLocation": "./build/static",
-			"apiLocation": "./func"
+			"apiLocation": "./build/server"
 		}
 	}
 }
