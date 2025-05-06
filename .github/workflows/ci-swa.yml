@@ -170,6 +170,7 @@ jobs:
             npm install --omit=dev --prefix ./tests/demo/func
             du -sh ./tests/demo/func/sk_render
             du -sh ./tests/demo/func
+            ls -la ./tests/demo/func/HelloWorld
 
             # Standard API directory
             # cat ./tests/demo/build/server/package.json
