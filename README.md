@@ -29,7 +29,7 @@ export type EmulateOptions = {
 ```
 
 - `options.external`
-  - default: `['fsevents', '@azure/functions']`
+  - always included: `['fsevents', '@azure/functions']`
   - other externals, if `apiDir` is not provided, will be automatically added to the generated Azure Functions `package.json`
 - `options.serverAlias`
   - In some cases the rollup is not able to resolve the dependency properly (for the server) (e.g. `@sentry/sveltekit`)
