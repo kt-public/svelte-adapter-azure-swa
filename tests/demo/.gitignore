@@ -25,6 +25,7 @@ vite.config.ts.timestamp-*
 
 sk_render/
 customStatic/
+func/package-lock.json
 
 # Sentry Config File
 .env.sentry-build-plugin
