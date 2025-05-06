@@ -1,6 +1,11 @@
 {
 	"configurations": {
-		"app": {
+    "app": {
+			"appLocation": ".",
+			"outputLocation": "./build/static",
+			"apiLocation": "./build/server"
+		},
+		"app2": {
 			"appLocation": ".",
 			"outputLocation": "./build/static",
 			"apiLocation": "./func"
