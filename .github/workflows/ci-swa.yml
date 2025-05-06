@@ -165,9 +165,12 @@ jobs:
           run-script: |
             npm run build --prefix ./tests/demo
             cat ./tests/demo/func/package.json
-            npm install --omit=dev --prefix ./tests/demo/func
-            du -sh ./tests/demo/func/sk_render
-            du -sh ./tests/demo/func
+            # npm install --omit=dev --prefix ./tests/demo/func
+            npm install --omit=dev --prefix ./tests/demo/build/server
+            # du -sh ./tests/demo/func/sk_render
+            # du -sh ./tests/demo/func
+            du -sh ./tests/demo/build/server/sk_render
+            du -sh ./tests/demo/build/server
             du -sh ./tests/demo/build/static
           working-directory: .
 
@@ -181,7 +184,8 @@ jobs:
           ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
           app_location: './tests/demo/build/static' # App source code path
-          api_location: './tests/demo/func' # Api source code path - optional
+          api_location: './tests/demo/build/server' # Api source code path
+          # api_location: './tests/demo/func' # Api source code path - optional
           # output_location: '.' # Built app content directory - optional
           skip_app_build: true
           skip_api_build: true

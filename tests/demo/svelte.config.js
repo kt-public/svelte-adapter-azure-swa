@@ -39,8 +39,8 @@ const _adapterSWA = adapterSWA({
 	// TODO: https://github.com/getsentry/sentry-javascript/issues/16190
 	// external: ['@sentry/sveltekit'],
 	external: [
-		'@babel/preset-typescript/package.json'
-		//  '@sentry/sveltekit'
+		'@babel/preset-typescript/package.json',
+		 '@sentry/sveltekit'
 	],
 	serverAlias: {
 		'@sentry/sveltekit': join(
@@ -49,7 +49,7 @@ const _adapterSWA = adapterSWA({
 		)
 	},
 	serverOnwarn,
-	apiDir: './func',
+	// apiDir: './func',
 	// cleanApiDir: true,
 	// staticDir: './customStatic',
 	// cleanStaticDir: true,
