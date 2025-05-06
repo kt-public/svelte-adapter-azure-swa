@@ -1,5 +1,4 @@
 import * as Sentry from '@sentry/sveltekit';
-import { handleErrorWithSentry, replayIntegration } from '@sentry/sveltekit';
 
 Sentry.init({
 	dsn: 'https://322c21a1542a9b5f9b3c6467b3528435@o4508446119624704.ingest.de.sentry.io/4509255200669776',
@@ -15,8 +14,8 @@ Sentry.init({
 	replaysOnErrorSampleRate: 1.0,
 
 	// If you don't want to use Session Replay, just remove the line below:
-	integrations: [replayIntegration()]
+	integrations: [Sentry.replayIntegration()]
 });
 
 // If you have a custom error handler, pass it to `handleErrorWithSentry`
-export const handleError = handleErrorWithSentry();
+export const handleError = Sentry.handleErrorWithSentry();
