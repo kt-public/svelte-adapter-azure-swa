@@ -46,7 +46,7 @@ const _adapterSWA = adapterSWA({
 		)
 	},
 	serverOnwarn,
-	// apiDir: './func',
+	apiDir: './func',
 	// cleanApiDir: true,
 	// staticDir: './customStatic',
 	// cleanStaticDir: true,
