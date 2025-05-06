@@ -22,26 +22,26 @@ console.warn('#'.repeat(100));
 const ignoreWarnCodes = new Set(['THIS_IS_UNDEFINED', 'CIRCULAR_DEPENDENCY']);
 /** @type {import('svelte-adapter-azure-swa').Options} */
 const serverOnwarn = (warning, handler) => {
-  if (
-    ignoreWarnCodes.has(warning.code) ||
-    (warning.plugin === 'sourcemaps' && warning.code === 'PLUGIN_WARNING')
-  ) {
-    // Ignore this warning
-    return;
-  }
-  // Use default warning handler for all other warnings
-  handler(warning);
-}
+	if (
+		ignoreWarnCodes.has(warning.code) ||
+		(warning.plugin === 'sourcemaps' && warning.code === 'PLUGIN_WARNING')
+	) {
+		// Ignore this warning
+		return;
+	}
+	// Use default warning handler for all other warnings
+	handler(warning);
+};
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _adapterNode = adapterNode();
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _adapterSWA = adapterSWA({
-  // TODO: https://github.com/getsentry/sentry-javascript/issues/16190
+	// TODO: https://github.com/getsentry/sentry-javascript/issues/16190
 	// external: ['@sentry/sveltekit'],
 	external: [
-    '@babel/preset-typescript/package.json',
-    //  '@sentry/sveltekit'
-    ],
+		'@babel/preset-typescript/package.json'
+		//  '@sentry/sveltekit'
+	],
 	serverAlias: {
 		'@sentry/sveltekit': join(
 			process.cwd(),
