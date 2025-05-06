@@ -62,6 +62,8 @@ jobs:
     strategy:
       matrix:
         node-version: ${{ fromJson(inputs.matrix-node-version) }}
+    env:
+      NODE_ENV: development # Avoid uploadig source maps to sentry
     steps:
       - uses: actions/checkout@v4
 
