@@ -37,7 +37,10 @@ const _adapterNode = adapterNode();
 const _adapterSWA = adapterSWA({
   // TODO: https://github.com/getsentry/sentry-javascript/issues/16190
 	// external: ['@sentry/sveltekit'],
-	external: ['@babel/preset-typescript/package.json', '@sentry/sveltekit'],
+	external: [
+    //'@babel/preset-typescript/package.json',
+     '@sentry/sveltekit'
+    ],
 	// serverAlias: {
 	// 	'@sentry/sveltekit': join(
 	// 		process.cwd(),
