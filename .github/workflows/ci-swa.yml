@@ -164,14 +164,19 @@ jobs:
           # Overall CI workflow reduced from about 5:00 minutes to about 2:30 minutes
           run-script: |
             npm run build --prefix ./tests/demo
-            # cat ./tests/demo/func/package.json
-            cat ./tests/demo/build/server/package.json
-            # npm install --omit=dev --prefix ./tests/demo/func
-            npm install --omit=dev --prefix ./tests/demo/build/server
-            # du -sh ./tests/demo/func/sk_render
-            # du -sh ./tests/demo/func
-            du -sh ./tests/demo/build/server/sk_render
-            du -sh ./tests/demo/build/server
+
+            # Custom API directory
+            cat ./tests/demo/func/package.json
+            npm install --omit=dev --prefix ./tests/demo/func
+            du -sh ./tests/demo/func/sk_render
+            du -sh ./tests/demo/func
+
+            # Standard API directory
+            # cat ./tests/demo/build/server/package.json
+            # npm install --omit=dev --prefix ./tests/demo/build/server
+            # du -sh ./tests/demo/build/server/sk_render
+            # du -sh ./tests/demo/build/server
+
             du -sh ./tests/demo/build/static
           working-directory: '.'
 
