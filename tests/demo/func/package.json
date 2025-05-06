@@ -1,6 +1,6 @@
 {
 	"type": "module",
-	"main": "sk_render/index.js",
+	"main": "./sk_render/index.js",
 	"dependencies": {
 		"@azure/functions": "^4",
 		"@sentry/sveltekit": "^9.15.0"
