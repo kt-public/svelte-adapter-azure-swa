@@ -1,6 +1,7 @@
 import adapterNode from '@sveltejs/adapter-node';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import adapterSWA from 'svelte-adapter-azure-swa';
+import { join } from 'path';
 
 const [major] = process.versions.node.split('.').map(Number);
 let NODE_API_RUNTIME = (process.env.NODE_API_RUNTIME || '').trim();
@@ -38,15 +39,15 @@ const _adapterSWA = adapterSWA({
   // TODO: https://github.com/getsentry/sentry-javascript/issues/16190
 	// external: ['@sentry/sveltekit'],
 	external: [
-    //'@babel/preset-typescript/package.json',
-     '@sentry/sveltekit'
+    '@babel/preset-typescript/package.json',
+    //  '@sentry/sveltekit'
     ],
-	// serverAlias: {
-	// 	'@sentry/sveltekit': join(
-	// 		process.cwd(),
-	// 		'node_modules/@sentry/sveltekit/build/esm/index.server.js'
-	// 	)
-	// },
+	serverAlias: {
+		'@sentry/sveltekit': join(
+			process.cwd(),
+			'node_modules/@sentry/sveltekit/build/esm/index.server.js'
+		)
+	},
 	serverOnwarn,
 	apiDir: './func',
 	// cleanApiDir: true,
