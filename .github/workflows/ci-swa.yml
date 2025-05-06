@@ -170,14 +170,8 @@ jobs:
             npm install --omit=dev --prefix ./tests/demo/func
             du -sh ./tests/demo/func/sk_render
             du -sh ./tests/demo/func
-            ls -la ./tests/demo/func/HelloWorld
 
-            # Standard API directory
-            # cat ./tests/demo/build/server/package.json
-            # npm install --omit=dev --prefix ./tests/demo/build/server
-            # du -sh ./tests/demo/build/server/sk_render
-            # du -sh ./tests/demo/build/server
-
+            # Standard Static directory
             du -sh ./tests/demo/build/static
           working-directory: '.'
 
