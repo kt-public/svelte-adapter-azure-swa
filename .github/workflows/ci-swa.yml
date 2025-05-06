@@ -72,7 +72,7 @@ jobs:
           install-script: ${{ needs.config.outputs.install-script }}
           cache-additional-path: ${{ needs.config.outputs.cache-additional-path }}
           run-script: npm run test:swa --prefix ./tests/demo
-          working-directory: .
+          working-directory: '.'
 
   swa-azure:
     needs: config
@@ -95,7 +95,7 @@ jobs:
           echo "github.ref: ${{ github.ref }}"
           echo "github.event_name: ${{ github.event_name }}"
           echo "result=true" >> "$GITHUB_OUTPUT"
-        working-directory: .
+        working-directory: '.'
 
       # Check that it's a pull request into the default branch from within the same organization
       - id: pr-to-main
@@ -111,7 +111,7 @@ jobs:
           echo "github.event.pull_request.head.repo.owner.login: ${{ github.event.pull_request.head.repo.owner.login }}"
           echo "github.event.repository.owner.login: ${{ github.event.repository.owner.login }}"
           echo "result=true" >> "$GITHUB_OUTPUT"
-        working-directory: .
+        working-directory: '.'
 
       # Check if AZURE_STATIC_WEB_APPS_API_TOKEN is set
       - id: do-swa-azure
@@ -124,7 +124,7 @@ jobs:
             echo "Deploy token is set. Proceeding with deployment."
             echo "result=true" >> "$GITHUB_OUTPUT"
           fi
-        working-directory: .
+        working-directory: '.'
 
       - id: app-token
         if: ${{ steps.do-swa-azure.outputs.result == 'true' }}
@@ -164,7 +164,8 @@ jobs:
           # Overall CI workflow reduced from about 5:00 minutes to about 2:30 minutes
           run-script: |
             npm run build --prefix ./tests/demo
-            cat ./tests/demo/func/package.json
+            # cat ./tests/demo/func/package.json
+            cat ./tests/demo/build/server/package.json
             # npm install --omit=dev --prefix ./tests/demo/func
             npm install --omit=dev --prefix ./tests/demo/build/server
             # du -sh ./tests/demo/func/sk_render
@@ -172,7 +173,7 @@ jobs:
             du -sh ./tests/demo/build/server/sk_render
             du -sh ./tests/demo/build/server
             du -sh ./tests/demo/build/static
-          working-directory: .
+          working-directory: '.'
 
       - uses: ./.github/actions/static-web-apps-deploy-wrapper
         if: ${{ steps.do-swa-azure.outputs.result == 'true' }}
