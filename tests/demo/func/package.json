@@ -3,6 +3,6 @@
 	"main": "**/index.js",
 	"dependencies": {
 		"@azure/functions": "^4",
-    "@sentry/sveltekit": "^9.15.0"
+		"@sentry/sveltekit": "^9.15.0"
 	}
 }
