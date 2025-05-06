@@ -1,5 +1,4 @@
 import * as Sentry from '@sentry/sveltekit';
-import { handleErrorWithSentry, sentryHandle } from '@sentry/sveltekit';
 import { sequence } from '@sveltejs/kit/hooks';
 
 Sentry.init({
@@ -12,7 +11,7 @@ Sentry.init({
 });
 
 // If you have custom handlers, make sure to place them after `sentryHandle()` in the `sequence` function.
-export const handle = sequence(sentryHandle());
+export const handle = sequence(Sentry.sentryHandle());
 
 // If you have a custom error handler, pass it to `handleErrorWithSentry`
-export const handleError = handleErrorWithSentry();
+export const handleError = Sentry.handleErrorWithSentry();
