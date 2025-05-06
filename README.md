@@ -15,10 +15,7 @@ Differences with original adapter:
   - the output is bundled with chunks, not into one single file, this reduces the total size of the bundle
   - `customApi/sk_render`, where the server bundle is generated to if custom `apiDir` location is provided is cleaned up. This can be switched off by setting `cleanApiDir` to `false`.
   - `customStatic`, where the client bundle is generated to if custom `staticDir` location is provided is cleaned up. This can be switched off by setting `cleanStaticDir` to `false`.
-- Fixed issue with sourcemaps, so Sentry should be able to work with the result (not completely tested yet, some of things still don't work perfectly)
-  - https://github.com/sveltejs/kit/issues/10040
-  - https://github.com/getsentry/sentry-javascript/issues/16189
-  - https://github.com/getsentry/sentry-javascript/issues/16190
+- Fixed issue with sourcemaps, so Sentry should be able to work with the result
 - Emulator of the platform via `options.emulate`
 
 ```ts
@@ -31,36 +28,7 @@ export type EmulateOptions = {
 - `options.external`
   - always included: `['fsevents', '@azure/functions']`
   - other externals, if `apiDir` is not provided, will be automatically added to the generated Azure Functions `package.json`
-- `options.serverAlias`
-  - In some cases the rollup is not able to resolve the dependency properly (for the server) (e.g. `@sentry/sveltekit`)
-  - You may want to provide alias resolution
-
-```js
-'@sentry/sveltekit': join(
-			process.cwd(),
-			'node_modules/@sentry/sveltekit/build/esm/index.server.js'
-		)
-```
-
-- `options.serverOnwarn: RollupOptions['onwarn']`
-  - Same if you may receive too many warnings, that you want to ignore, you can add ignore functionality here
-
-```js
-const ignoreWarnCodes = new Set(['THIS_IS_UNDEFINED', 'CIRCULAR_DEPENDENCY']);
-const _adapterSWA = adapterSWA({
-	serverOnwarn: (warning, handler) => {
-		if (
-			ignoreWarnCodes.has(warning.code) ||
-			(warning.plugin === 'sourcemaps' && warning.code === 'PLUGIN_WARNING')
-		) {
-			// Ignore this warning
-			return;
-		}
-		// Use default warning handler for all other warnings
-		handler(warning);
-	}
-});
-```
+- `options.serverRollup` function to adjust rollup options for the server bundling
 
 # svelte-adapter-azure-swa
 
