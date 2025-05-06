@@ -75,12 +75,12 @@ describe('adapt', () => {
 		expect(builder.writePrerendered).toBeCalled();
 		expect(builder.writeClient).toBeCalled();
 		expect(builder.copy).toBeCalledWith(
-			expect.stringContaining('api'),
+			expect.stringContaining('server/template'),
 			'build/server',
 			expect.anything()
 		);
 		expect(builder.copy).toBeCalledWith(
-			expect.stringContaining('api'),
+			expect.stringContaining('server/template/package.json'),
 			'build/server/package.json'
 		);
 	});
@@ -92,7 +92,7 @@ describe('adapt', () => {
 		expect(builder.writePrerendered).toBeCalled();
 		expect(builder.writeClient).toBeCalled();
 		expect(builder.copy).toBeCalledWith(
-			expect.stringContaining('api'),
+			expect.stringContaining('server/template'),
 			'build/server',
 			expect.anything()
 		);
@@ -190,7 +190,7 @@ describe('adapt', () => {
 		await expect(adapter.adapt(builder)).resolves.not.toThrow();
 	});
 
-	test('tests emulate authenticated', async () => {
+	test('emulate authenticated', async () => {
 		const adapter = azureAdapter({
 			apiDir: 'custom/api',
 			cleanApiDir: true,
@@ -202,7 +202,7 @@ describe('adapt', () => {
 		expect(platform.user).toBeDefined();
 	});
 
-	test('tests emulate unauthenticated', async () => {
+	test('emulate unauthenticated', async () => {
 		const adapter = azureAdapter({
 			apiDir: 'custom/api',
 			cleanApiDir: true,
@@ -212,6 +212,24 @@ describe('adapt', () => {
 		const platform = emulator.platform({}, 'auto');
 		expect(platform.clientPrincipal).toBeNull();
 		expect(platform.user).toBeNull();
+	});
+
+	test('serverRollup - should not overwrite options.output', async () => {
+		const adapter = azureAdapter({
+			serverRollup: (options) => ({ ...options, output: { ...options.output, sourcemap: false } })
+		});
+		const builder = getMockBuilder();
+		await adapter.adapt(builder);
+		expect(rollup).toBeCalledWith(
+			expect.objectContaining({
+				output: {
+					format: 'es',
+					sourcemap: true,
+					dir: 'build/server/sk_render',
+					entryFileNames: 'index.js'
+				}
+			})
+		);
 	});
 });
 
