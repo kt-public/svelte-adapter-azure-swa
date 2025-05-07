@@ -30,6 +30,10 @@ export type EmulateOptions = {
   - other externals, if `apiDir` is not provided, will be automatically added to the generated Azure Functions `package.json`
 - `options.serverRollup` function to adjust rollup options for the server bundling
 
+- Utilities
+  - `list_files`: copy from `@sveltejs/kit` internal utilities
+  - `sentryRewriteSourcesFactory`: creates rewriteSource function for `sentrySvelteKit` plugin's option `sourceMapsUploadOptions.unstable_sentryVitePluginOptions.sourcemaps.rewriteSources`, because `@sentry/sveltekit` does not resolve it properly
+
 # svelte-adapter-azure-swa
 
 Adapter for Svelte apps that creates an Azure Static Web App, using an Azure function for dynamic server rendering. If your app is purely static, you may be able to use [adapter-static](https://www.npmjs.com/package/@sveltejs/adapter-static) instead.

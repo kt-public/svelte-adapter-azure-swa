@@ -31,6 +31,14 @@ export type Options = {
 
 export default function plugin(options?: Options): Adapter;
 
+// Utils
+export declare function list_files(dir: string, filter: (file: string) => boolean): string[];
+export declare function sentryRewriteSourcesFactory(
+	dirs: string[],
+	log?: Console['log']
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+): (source: string, map: any) => string;
+
 declare global {
 	namespace App {
 		export interface Platform {
