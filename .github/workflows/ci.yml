@@ -58,8 +58,7 @@ jobs:
       - uses: kt-workflows/actions/npm-ci-check@main
         with:
           matrix-node-version: ${{ needs.config.outputs.matrix-node-version }}
-          no-cache: true
-          cache-reset: true
+          cache-reset: ${{ needs.config.outputs.cache-reset }}
 
   test:
     needs: config
