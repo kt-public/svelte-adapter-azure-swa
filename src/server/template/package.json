@@ -1,11 +1,11 @@
 {
-  "name": "azure-function-template",
-  "version": "1.0.0",
-  "type": "module",
-  "exports": {
-    ".": "./sk_render/index.js"
-  },
-  "dependencies": {
-    "@azure/functions": "^4.7.0"
-  }
+	"name": "azure-function-template",
+	"version": "1.0.0",
+	"type": "module",
+	"exports": {
+		".": "./sk_render/index.js"
+	},
+	"dependencies": {
+		"@azure/functions": "^4.7.0"
+	}
 }
