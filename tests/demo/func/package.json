@@ -1,6 +1,10 @@
 {
 	"type": "module",
 	"main": "*/index.js",
+	"exports": {
+		"./sk_render": "./sk_render/index.js",
+		"./HelloWorld": "./HelloWorld/index.js"
+	},
 	"dependencies": {
 		"@azure/functions": "^4",
 		"@sentry/sveltekit": "^9.15.0"
