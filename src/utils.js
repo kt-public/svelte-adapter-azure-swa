@@ -29,8 +29,12 @@ export function list_files(dir, filter) {
 	return files;
 }
 
-/** @type {import('.').sentryRewriteSourcesFactory} */
-export function sentryRewriteSourcesFactory(dirs, log = undefined) {
+/**
+ * @param {string[]} dirs directories to search
+ * @param {Console['log']} log logger function
+ * @returns {Map<string, string>} Map of source file paths to directory of the source map & js file
+ */
+function loadMapSource2JSDir(dirs, log) {
 	// We need to build map source (from source map files) -> js file directory
 	/** @type {string[]} */
 	let mapFiles = [];
@@ -54,9 +58,20 @@ export function sentryRewriteSourcesFactory(dirs, log = undefined) {
 		`Found ${mapSource2JSDir.size} sources in ${mapFiles.length} maps in '${dirs.join(', ')}' directories`
 	);
 	log?.('-'.repeat(80));
+	return mapSource2JSDir;
+}
+
+/** @type {import('.').sentryRewriteSourcesFactory} */
+export function sentryRewriteSourcesFactory(dirs, log = undefined) {
+	// We need to build map source (from source map files) -> js file directory
+	/** @type {Map<string, string>} */
+	let mapSource2JSDir = undefined;
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	return (source, map) => {
+		if (!mapSource2JSDir) {
+			mapSource2JSDir = loadMapSource2JSDir(dirs, log);
+		}
 		const mapDir = mapSource2JSDir.get(source);
 		if (!mapDir) {
 			log?.(`Location of sourcemap for source ${source} not found`);
