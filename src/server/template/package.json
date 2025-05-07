@@ -2,7 +2,7 @@
 	"name": "azure-function-template",
 	"version": "1.0.0",
 	"type": "module",
-	"main": "./sk_render/index.js",
+	"main": "sk_render/index.js",
 	"exports": {
 		".": "./sk_render/index.js"
 	},
