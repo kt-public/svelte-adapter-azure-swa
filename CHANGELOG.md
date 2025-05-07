@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.23.1
+
+### Patch Changes
+
+- 3b08ff6: Utilities for re-writing sourcemaps for Sentry, cause it does not resolve source paths properly
+- 628bdec: Resolved issue with multiple functions in the custom api, https://github.com/kt-npm-modules/svelte-adapter-azure-swa/issues/92
+- 4244151: dependabot: directory '/', update @types/node
+- b9965af: dependabot: directory '/', update @types/node
+- 32b248c: dependabot: directory '/', update @types/node
+- 32b248c: dependabot: directory '/', update rollup
+- e7255b4: Rework options, add `options.serverRollup` to override/adjust rolup options for server bundling
+
 ## 0.23.0
 
 ### Minor Changes
