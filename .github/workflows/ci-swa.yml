@@ -169,8 +169,7 @@ jobs:
 
             # Custom API directory
             cat ./tests/demo/func/package.json
-            # Skipping npm install in the API function directory - node_modules are ignored in .funcignore
-            # npm install --prefix ./tests/demo/func
+            npm install --omit=dev --prefix ./tests/demo/func
             du -sh ./tests/demo/func/sk_render
             du -sh ./tests/demo/func
 
