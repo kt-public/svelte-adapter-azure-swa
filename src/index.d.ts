@@ -32,10 +32,13 @@ export type Options = {
 export default function plugin(options?: Options): Adapter;
 
 // Sentry
+type SentryOptions = {
+	prefixDir?: string;
+	log?: Console['log'];
+};
 export declare function sentryRewriteSourcesFactory(
 	dirs: string[],
-	addPrefix?: string,
-	log?: Console['log']
+	options?: SentryOptions
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): (source: string, map: any) => string;
 

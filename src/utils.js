@@ -66,10 +66,13 @@ function loadMapSource2JSDir(dirs, log) {
 }
 
 /** @type {import('.').sentryRewriteSourcesFactory} */
-export function sentryRewriteSourcesFactory(dirs, addPrefix = '', log = undefined) {
+export function sentryRewriteSourcesFactory(dirs, options = undefined) {
 	// We need to build map source (from source map files) -> js file directory
 	/** @type {Map<string, string>} */
 	let mapSource2JSDir = undefined;
+
+	const log = options?.log;
+	const prefixDir = options?.prefixDir ?? '';
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	return (source, map) => {
@@ -81,7 +84,7 @@ export function sentryRewriteSourcesFactory(dirs, addPrefix = '', log = undefine
 			log?.(`Location of sourcemap for source ${source} not found`);
 			return source;
 		}
-		const newSource = join(addPrefix, join(mapDir, source));
+		const newSource = join(prefixDir, join(mapDir, source));
 		log?.(`Rewriting source ${source} -> ${newSource}`);
 		return newSource;
 	};
