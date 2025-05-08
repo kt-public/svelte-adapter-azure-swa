@@ -31,8 +31,7 @@ export type Options = {
 
 export default function plugin(options?: Options): Adapter;
 
-// Utils
-export declare function list_files(dir: string, filter: (file: string) => boolean): string[];
+// Sentry
 export declare function sentryRewriteSourcesFactory(
 	dirs: string[],
 	log?: Console['log']

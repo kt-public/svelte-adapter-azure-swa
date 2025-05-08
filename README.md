@@ -31,7 +31,6 @@ export type EmulateOptions = {
 - `options.serverRollup` function to adjust rollup options for the server bundling
 
 - Utilities
-  - `list_files`: copy from `@sveltejs/kit` internal utilities
   - `sentryRewriteSourcesFactory`: creates rewriteSource function for `sentrySvelteKit` plugin's option `sourceMapsUploadOptions.unstable_sentryVitePluginOptions.sourcemaps.rewriteSources`, because `@sentry/sveltekit` does not resolve it properly
 
 # svelte-adapter-azure-swa
