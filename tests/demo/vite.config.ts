@@ -21,9 +21,9 @@ export default defineConfig({
 				unstable_sentryVitePluginOptions: {
 					sourcemaps: {
 						rewriteSources: sentryRewriteSourcesFactory(['./build', './func'], {
-              prefixDir: 'tests/demo',
-              log: console.log
-            })
+							prefixDir: 'tests/demo',
+							log: console.log
+						})
 					}
 				}
 			}
