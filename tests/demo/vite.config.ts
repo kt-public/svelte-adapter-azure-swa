@@ -20,7 +20,10 @@ export default defineConfig({
 				authToken: process.env.SENTRY_AUTH_TOKEN,
 				unstable_sentryVitePluginOptions: {
 					sourcemaps: {
-						rewriteSources: sentryRewriteSourcesFactory(['./build', './func'], console.log)
+						rewriteSources: sentryRewriteSourcesFactory(['./build', './func'], {
+              prefixDir: 'tests/demo',
+              log: console.log
+            })
 					}
 				}
 			}
