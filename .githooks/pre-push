@@ -2,6 +2,6 @@
 
 set -e
 
-npm ci
+npm ci:all
 npm run check:all
 npm run lint:all
