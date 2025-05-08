@@ -66,7 +66,7 @@ function loadMapSource2JSDir(dirs, log) {
 }
 
 /** @type {import('.').sentryRewriteSourcesFactory} */
-export function sentryRewriteSourcesFactory(dirs, log = undefined) {
+export function sentryRewriteSourcesFactory(dirs, addPrefix = '', log = undefined) {
 	// We need to build map source (from source map files) -> js file directory
 	/** @type {Map<string, string>} */
 	let mapSource2JSDir = undefined;
@@ -81,7 +81,7 @@ export function sentryRewriteSourcesFactory(dirs, log = undefined) {
 			log?.(`Location of sourcemap for source ${source} not found`);
 			return source;
 		}
-		const newSource = join(mapDir, source);
+		const newSource = join(addPrefix, join(mapDir, source));
 		log?.(`Rewriting source ${source} -> ${newSource}`);
 		return newSource;
 	};

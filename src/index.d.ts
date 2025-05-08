@@ -34,6 +34,7 @@ export default function plugin(options?: Options): Adapter;
 // Sentry
 export declare function sentryRewriteSourcesFactory(
 	dirs: string[],
+	addPrefix?: string,
 	log?: Console['log']
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): (source: string, map: any) => string;
