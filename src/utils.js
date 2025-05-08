@@ -1,8 +1,12 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, posix, resolve } from 'node:path';
 
-/** @type {import('.').list_files} */
-export function list_files(dir, filter) {
+/**
+ * @param {string} dir directory to search
+ * @param {(file: string) => boolean} [filter] filter function to apply to each file
+ * @returns {string[]} array of file paths
+ */
+function list_files(dir, filter) {
 	/** @type {string[]} */
 	const files = [];
 

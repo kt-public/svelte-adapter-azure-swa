@@ -73,4 +73,4 @@ If you want to suppress this error, set allowReservedSwaRoutes to true in your a
 	};
 }
 
-export { list_files, sentryRewriteSourcesFactory } from './utils.js';
+export { sentryRewriteSourcesFactory } from './utils.js';
