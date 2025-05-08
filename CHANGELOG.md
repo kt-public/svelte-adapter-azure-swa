@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.23.2
+
+### Patch Changes
+
+- 2f13249: Add prefixDir option to the sentryRewriteSourcesFactory util function. If monorepo is used, user can provide the prefix dir location, which will be joined (`path.join`) during rewriting of source paths for sentry.
+
 ## 0.23.1
 
 ### Patch Changes
