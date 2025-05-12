@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.23.3
+
+### Patch Changes
+
+- 6b4f675: dependabot: directory '/', update @sentry/sveltekit
+- 6b4f675: dependabot: directory '/', update @types/node
+- 6b4f675: dependabot: directory '/', update eslint-config-prettier
+
 ## 0.23.2
 
 ### Patch Changes
