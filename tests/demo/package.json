@@ -52,7 +52,7 @@
 		"vitest": "^3.0.0"
 	},
 	"dependencies": {
-		"@sentry/sveltekit": "^9.15.0"
+		"@sentry/sveltekit": "^9.17.0"
 	},
 	"engines": {
 		"node": ">=20.0.0 <21"
