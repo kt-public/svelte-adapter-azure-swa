@@ -3,23 +3,15 @@ name: CI-SWA
 on:
   workflow_call:
     inputs:
-      # pass the matrix node version to the called workflow
-      matrix-node-version:
+      node-version:
         required: true
         type: string
-      # install-script:
-      #   required: false
-      #   type: string
-      # cache-additional-path:
-      #   required: false
-      #   type: string
       cache-reset:
         required: false
         type: boolean
     secrets:
       WORKFLOW_APP_ID:
       WORKFLOW_APP_PRIVATE_KEY:
-      AZURE_STATIC_WEB_APPS_API_TOKEN:
 
 env:
   PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: true
@@ -39,11 +31,13 @@ permissions:
 
 jobs:
   config:
+    environment: development
     # prepare the configuration for the workflow from different sources of variables
     runs-on: ubuntu-latest
     outputs:
       cache-additional-path: ${{ steps.config.outputs.CACHE_ADDITIONAL_PATH }}
       install-script: ${{ steps.config.outputs.INSTALL_SCRIPT }}
+      do-azure: ${{ steps.do-swa-azure.outputs.result }}
     steps:
       - id: config
         run: |
@@ -54,41 +48,10 @@ jobs:
             echo "CACHE_ADDITIONAL_PATH is set to '${{ vars.CACHE_ADDITIONAL_PATH }}'."
             echo "CACHE_ADDITIONAL_PATH=${{ vars.CACHE_ADDITIONAL_PATH }}" >> "$GITHUB_OUTPUT"
           fi
+
           echo "INSTALL_SCRIPT=$DEFAULT_INSTALL_SCRIPT" >> "$GITHUB_OUTPUT"
 
-  swa-cli:
-    needs: config
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: ${{ fromJson(inputs.matrix-node-version) }}
-    env:
-      NODE_ENV: development # Avoid uploadig source maps to sentry
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: kt-workflows/actions/npm-run-script@main
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache-reset: ${{ inputs.cache-reset }}
-          install-script: ${{ needs.config.outputs.install-script }}
-          cache-additional-path: ${{ needs.config.outputs.cache-additional-path }}
-          run-script: npm run test:swa --prefix ./tests/demo
-          working-directory: '.'
-
-  swa-azure:
-    needs: config
-    environment: development
-    runs-on: ubuntu-latest
-    # Deploy to the same environment and wait for the previous job to finish, if we have more than one node version to test
-    concurrency:
-      group: swa-azure-${{ github.repository }}-${{ github.workflow }}-${{ github.ref }}
-    strategy:
-      matrix:
-        node-version: ${{ fromJson(inputs.matrix-node-version) }}
-    steps:
       # We only run azure SWA deployment if we push to the default branch or create a PR into the default branch from our own org!
-
       # Check that it's a push into the default branch
       - id: main-push
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -128,8 +91,35 @@ jobs:
           fi
         working-directory: '.'
 
+  cli:
+    needs: config
+    runs-on: ubuntu-latest
+    env:
+      NODE_ENV: development # Avoid uploadig source maps to sentry
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: kt-workflows/actions/npm-run-script@main
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache-reset: ${{ inputs.cache-reset }}
+          install-script: ${{ needs.config.outputs.install-script }}
+          cache-additional-path: ${{ needs.config.outputs.cache-additional-path }}
+          run-script: npm run test:swa --prefix ./tests/demo
+          working-directory: '.'
+
+  azure-deploy:
+    needs: config
+    if: ${{ needs.config.outputs.do-azure == 'true' }}
+    environment: development
+    runs-on: ubuntu-latest
+    # Deploy to the same environment and wait for the previous job to finish, if we have more than one node version to test
+    concurrency:
+      group: swa-azure-${{ github.repository }}-${{ github.workflow }}-${{ github.ref }}
+    outputs:
+      base-url: ${{ steps.build-deploy.outputs.static_web_app_url }}
+    steps:
       - id: app-token
-        if: ${{ steps.do-swa-azure.outputs.result == 'true' }}
         uses: kt-workflows/actions/create-github-app-token@main
         with:
           app-id: ${{ secrets.WORKFLOW_APP_ID }}
@@ -139,12 +129,10 @@ jobs:
           default-to-github-token: true
 
       - uses: actions/checkout@v4
-        if: ${{ steps.do-swa-azure.outputs.result == 'true' }}
         with:
           token: ${{ steps.app-token.outputs.token }}
 
       - id: node-api-runtime
-        if: ${{ steps.do-swa-azure.outputs.result == 'true' }}
         run: |
           NODE_API_RUNTIME_MAJOR=$(node -v | cut -d. -f1 | cut -dv -f2)
           echo "NODE_API_RUNTIME_MAJOR=$NODE_API_RUNTIME_MAJOR" >> "$GITHUB_ENV"
@@ -152,9 +140,8 @@ jobs:
           echo "NODE_API_RUNTIME=$NODE_API_RUNTIME" >> "$GITHUB_ENV"
 
       - uses: kt-workflows/actions/npm-run-script@main
-        if: ${{ steps.do-swa-azure.outputs.result == 'true' }}
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ inputs.node-version }}
           cache-reset: ${{ inputs.cache-reset }}
           install-script: ${{ needs.config.outputs.install-script }}
           cache-additional-path: ${{ needs.config.outputs.cache-additional-path }}
@@ -178,7 +165,6 @@ jobs:
           working-directory: '.'
 
       - uses: ./.github/actions/static-web-apps-deploy-wrapper
-        if: ${{ steps.do-swa-azure.outputs.result == 'true' }}
         id: build-deploy
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
@@ -194,7 +180,22 @@ jobs:
           skip_api_build: true
           ###### End of Repository/Build Configurations ######
 
-      - run: npm test --prefix ./tests/demo
-        if: ${{ steps.do-swa-azure.outputs.result == 'true' }}
+  azure:
+    needs: [config, azure-deploy]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: kt-workflows/actions/npm-run-script@main
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache-reset: ${{ inputs.cache-reset }}
+          install-script: ${{ needs.config.outputs.install-script }}
+          cache-additional-path: ${{ needs.config.outputs.cache-additional-path }}
+          # Run the build script and install the dependencies for the built api of the demo app
+          # We build the app ourselves, otherwise the azure swa action will build it for us and it will take a very long time
+          # For example: with build ourselves it takes about 1:30-2:00 minutes to build and deploy
+          # With azure swa action it takes about 3:50 (or longer) minutes to build and deploy
+          # Additionally, the azure swa action will occasionaly fail on determining the environment step (this step takes a long time)
+          # Overall CI workflow reduced from about 5:00 minutes to about 2:30 minutes
+          run-script: npm test --prefix ./tests/demo
         env:
-          PLAYWRIGHT_TEST_BASE_URL: ${{ steps.build-deploy.outputs.static_web_app_url }}
+          PLAYWRIGHT_TEST_BASE_URL: ${{ needs.azure-deploy.outputs.base-url }}

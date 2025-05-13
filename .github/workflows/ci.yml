@@ -84,11 +84,14 @@ jobs:
           fail-on-empty-token: false # PRs outside of the org will not have a sonar token (secrets.SONAR_TOKEN is not available)
           cache-reset: ${{ needs.config.outputs.cache-reset }}
 
-  ci-swa:
+  swa:
+    strategy:
+      matrix:
+        node-version: ${{ fromJson(needs.config.outputs.matrix-node-version) }}
     needs: config
     uses: ./.github/workflows/ci-swa.yml
     with:
-      matrix-node-version: ${{ needs.config.outputs.matrix-node-version }}
+      node-version: ${{ matrix.node-version }}
       cache-reset: ${{ needs.config.outputs.cache-reset == 'true' }}
     secrets: inherit
 
