@@ -1,0 +1,18 @@
+{
+	"parent": "3a68b556-5b5a-4aab-9443-9b876d9bf545",
+	"pid": 93686,
+	"argv": [
+		"/Users/d050316/.nvm/versions/node/v20.18.3/bin/node",
+		"/Users/d050316/SAPDevelop/git/personal/kt-npm-modules/svelte-adapter-azure-swa/node_modules/.bin/npm",
+		"run",
+		"build"
+	],
+	"execArgv": [],
+	"cwd": "/Users/d050316/SAPDevelop/git/personal/kt-npm-modules/svelte-adapter-azure-swa/tests/demo",
+	"time": 1747196120419,
+	"ppid": 93613,
+	"coverageFilename": "/Users/d050316/SAPDevelop/git/personal/kt-npm-modules/svelte-adapter-azure-swa/tests/demo/.nyc_output/f613c56e-0d2c-4552-99d9-839caee244ce.json",
+	"externalId": "",
+	"uuid": "f613c56e-0d2c-4552-99d9-839caee244ce",
+	"files": []
+}
