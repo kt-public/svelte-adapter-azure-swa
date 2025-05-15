@@ -47,7 +47,7 @@ If you want to suppress this error, set allowReservedSwaRoutes to true in your a
 			} else {
 				// If either apiDir or staticDir are subdirectories of DEFAULT_OUT_DIR_PATH, we need to keep it
 				builder.log(
-					`Custom apiDir or staticDir are subdirectories of ${DEFAULT_OUT_DIR_PATH}, keeping it`
+					`Either custom apiDir or staticDir are subdirectories of '${DEFAULT_OUT_DIR_PATH}', keeping it`
 				);
 			}
 
@@ -66,13 +66,6 @@ If you want to suppress this error, set allowReservedSwaRoutes to true in your a
 
 			const clientOutDirPath = options.staticDir ?? CLIENT_DEFAULT_OUT_DIR_PATH;
 			await bundleClient(builder, clientOutDirPath, options);
-
-			const cleanStaticDir = options.cleanStaticDir ?? true;
-			if (options.staticDir !== undefined && cleanStaticDir) {
-				const _staticDir = options.staticDir;
-				builder.log(`Cleaning up static output directory: ${_staticDir}`);
-				builder.rimraf(_staticDir);
-			}
 
 			await writeSWAConfig(builder, clientOutDirPath, options);
 
