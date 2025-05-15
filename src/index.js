@@ -42,7 +42,7 @@ If you want to suppress this error, set allowReservedSwaRoutes to true in your a
 			const _defaultOutDirPath = resolve(DEFAULT_OUT_DIR_PATH);
 			if (!_apiDir?.startsWith(_defaultOutDirPath) && !_staticDir?.startsWith(_defaultOutDirPath)) {
 				// If neither apiDir nor staticDir are subdirectories of DEFAULT_OUT_DIR_PATH, we can safely remove it
-				builder.log(`Cleaning up default output directory: ${_defaultOutDirPath}`);
+				builder.log(`Cleaning up default output directory: ${DEFAULT_OUT_DIR_PATH}`);
 				builder.rimraf(_defaultOutDirPath);
 			} else {
 				// If either apiDir or staticDir are subdirectories of DEFAULT_OUT_DIR_PATH, we need to keep it
