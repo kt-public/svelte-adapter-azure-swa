@@ -2,6 +2,6 @@
 
 set -e
 
-npm run ci:all
-PUBLIC_SWA=true npm run check:all
-npm run lint:all
+npm run ci
+npm run check
+npm run lint

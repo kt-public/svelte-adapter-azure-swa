@@ -18,8 +18,8 @@ env:
   DEFAULT_CACHE_ADDITIONAL_PATH: /home/runner/.cache/ms-playwright
   DEFAULT_INSTALL_SCRIPT: >-
     npm ci &&
-    npm ci --prefix ./tests/demo &&
-    npm exec playwright install --prefix ./tests/demo
+    npm exec playwright install
+    # npm exec playwright install --prefix ./tests/demo
   PUBLIC_SWA: false
   CI: true
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
@@ -96,6 +96,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_ENV: development # Avoid uploadig source maps to sentry
+      PUBLIC_SWA: true
     steps:
       - uses: actions/checkout@v4
 
@@ -106,7 +107,6 @@ jobs:
           install-script: ${{ needs.config.outputs.install-script }}
           cache-additional-path: ${{ needs.config.outputs.cache-additional-path }}
           run-script: npm run test:swa --prefix ./tests/demo
-          working-directory: '.'
 
   azure-deploy:
     needs: config
