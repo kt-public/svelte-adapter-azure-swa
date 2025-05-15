@@ -52,6 +52,7 @@
 		"vitest": "^3.0.0"
 	},
 	"dependencies": {
+		"@azure/cosmos": "^4.4.0",
 		"@sentry/sveltekit": "^9.17.0"
 	},
 	"engines": {
