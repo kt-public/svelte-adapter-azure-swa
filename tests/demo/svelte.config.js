@@ -25,7 +25,7 @@ const _adapterSWA = adapterSWA({
 	external: ['@sentry/sveltekit'],
 	apiDir: './func',
 	// cleanApiDir: true,
-	// staticDir: './customStatic',
+	staticDir: './build/static',
 	// cleanStaticDir: true,
 	customStaticWebAppConfig: {
 		platform: {
