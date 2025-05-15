@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.23.3
+
+### Patch Changes
+
+- a90cd2d: dependabot: directory '/', update @sentry/sveltekit
+- a90cd2d: dependabot: directory '/', update @types/node
+- a90cd2d: dependabot: directory '/', update eslint-config-prettier
+
 ## 0.23.2
 
 ### Patch Changes

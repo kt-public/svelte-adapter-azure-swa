@@ -20,6 +20,5 @@ test.describe('Sentry Route', () => {
 
 		// Wait until all network activity is complete
 		await page.waitForLoadState('networkidle');
-		// throw new Error('Sentry error was sent');
 	});
 });

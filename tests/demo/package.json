@@ -11,12 +11,12 @@
 		"preview": "vite preview",
 		"swa": "PUBLIC_SWA=true swa start",
 		"prepare": "../../scripts/npm-link.sh && npm run sync",
-		"check": "npm run sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "npm run sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"check": "PUBLIC_SWA=false npm run sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "PUBLIC_SWA=false npm run sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
 		"test:unit": "vitest",
-		"test": "npm run test:unit -- --run && npm run test:e2e",
+		"test": "npm run sync && npm run test:unit -- --run && npm run test:e2e",
 		"test:e2e": "playwright test",
 		"test:swa": "PUBLIC_SWA=true npm run test"
 	},
@@ -52,6 +52,7 @@
 		"vitest": "^3.0.0"
 	},
 	"dependencies": {
+		"@azure/cosmos": "^4.4.0",
 		"@sentry/sveltekit": "^9.17.0"
 	},
 	"engines": {

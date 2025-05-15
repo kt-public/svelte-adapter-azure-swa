@@ -1,3 +1,4 @@
+import { resolve } from 'node:path';
 import { bundleClient } from './client/index.js';
 import {
 	CLIENT_DEFAULT_OUT_DIR_PATH,
@@ -34,7 +35,22 @@ If you want to suppress this error, set allowReservedSwaRoutes to true in your a
 				throw new Error('Conflicting routes detected. Please rename the routes listed above.');
 			}
 
-			builder.rimraf(DEFAULT_OUT_DIR_PATH);
+			// Check if we can rm DEFAULT_OUT_DIR_PATH
+			// Check that options.apiDir and options.staticDir are not subdirectories of DEFAULT_OUT_DIR_PATH
+			const _apiDir = options.apiDir ? resolve(options.apiDir) : undefined;
+			const _staticDir = options.staticDir ? resolve(options.staticDir) : undefined;
+			const _defaultOutDirPath = resolve(DEFAULT_OUT_DIR_PATH);
+			if (!_apiDir?.startsWith(_defaultOutDirPath) && !_staticDir?.startsWith(_defaultOutDirPath)) {
+				// If neither apiDir nor staticDir are subdirectories of DEFAULT_OUT_DIR_PATH, we can safely remove it
+				builder.log(`Cleaning up default output directory: ${DEFAULT_OUT_DIR_PATH}`);
+				builder.rimraf(_defaultOutDirPath);
+			} else {
+				// If either apiDir or staticDir are subdirectories of DEFAULT_OUT_DIR_PATH, we need to keep it
+				builder.log(
+					`Either custom apiDir or staticDir are subdirectories of '${DEFAULT_OUT_DIR_PATH}', keeping it`
+				);
+			}
+
 			if (options.apiDir !== undefined) {
 				builder.log.warn(
 					'If you override the apiDir location, make sure that it is a valid Azure Functions location.'
@@ -50,13 +66,6 @@ If you want to suppress this error, set allowReservedSwaRoutes to true in your a
 
 			const clientOutDirPath = options.staticDir ?? CLIENT_DEFAULT_OUT_DIR_PATH;
 			await bundleClient(builder, clientOutDirPath, options);
-
-			const cleanStaticDir = options.cleanStaticDir ?? true;
-			if (options.staticDir !== undefined && cleanStaticDir) {
-				const _staticDir = options.staticDir;
-				builder.log(`Cleaning up static output directory: ${_staticDir}`);
-				builder.rimraf(_staticDir);
-			}
 
 			await writeSWAConfig(builder, clientOutDirPath, options);
 
