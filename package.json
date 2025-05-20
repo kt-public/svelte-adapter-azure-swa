@@ -3,12 +3,13 @@
 	"description": "SvelteKit adapter for Azure Static Web Apps.",
 	"version": "0.23.3",
 	"workspaces": [
+		".",
 		"tests/demo"
 	],
 	"scripts": {
 		"clean": "rm -rf node_modules ./tests/demo/node_modules",
 		"clean:lock": "rm -rf node_modules package-lock.json ./tests/demo/node_modules ./tests/demo/package-lock.json",
-		"prepare": "npm run prepare --workspaces --if-present",
+		"prepare": "npm run prepare --workspace tests/demo",
 		"build": "npm run gen:swa-conig-ts",
 		"build:release": "npm run build",
 		"format": "prettier --write . && npm run format --prefix ./tests/demo",
