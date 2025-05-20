@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.23.4
+
+### Patch Changes
+
+- 181d605: dependabot: directory '/', update @eslint/js
+- 181d605: dependabot: directory '/', update @sveltejs/kit
+- 181d605: dependabot: directory '/', update @types/node
+- 181d605: dependabot: directory '/', update eslint-plugin-svelte
+- 181d605: dependabot: directory '/', update eslint
+- 181d605: dependabot: directory '/', update rollup
+- 181d605: dependabot: directory '/', update svelte
+
 ## 0.23.3
 
 ### Patch Changes
