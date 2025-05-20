@@ -8,7 +8,7 @@
 	"scripts": {
 		"clean": "rm -rf node_modules ./tests/demo/node_modules",
 		"clean:lock": "rm -rf node_modules package-lock.json ./tests/demo/node_modules ./tests/demo/package-lock.json",
-		"prepare": "./scripts/npm-link.sh && npm run prepare --prefix ./tests/demo",
+		"prepare": "npm run prepare --workspaces --if-present",
 		"build": "npm run gen:swa-conig-ts",
 		"build:release": "npm run build",
 		"format": "prettier --write . && npm run format --prefix ./tests/demo",

@@ -12,6 +12,11 @@ on:
 permissions:
   contents: write
 
+# cancel in-progress runs on new commits to same PR (gitub.event.number)
+concurrency:
+  group: ${{ github.repository }}-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   update-pull:
     runs-on: ubuntu-latest
