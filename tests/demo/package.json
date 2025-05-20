@@ -10,7 +10,7 @@
 		"build:swa": "PUBLIC_SWA=true npm run build",
 		"preview": "vite preview",
 		"swa": "PUBLIC_SWA=true swa start",
-		"prepare": "../../scripts/npm-link.sh && npm run sync",
+		"prepare": "npm run sync",
 		"check": "PUBLIC_SWA=false npm run sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "PUBLIC_SWA=false npm run sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",

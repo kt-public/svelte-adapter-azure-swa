@@ -57,6 +57,6 @@ if [ ${#packages_to_link[@]} -eq 0 ]; then
   echo "No packages to link."
   exit 0
 fi
-npm link "${packages_to_link[@]}" 2>/dev/null
+npm link "${packages_to_link[@]}"
 echo -e "\033[1;33mWarning: You may need to make sure that the linked packages are released and up to date.\033[0m"
 echo -e "\033[1;33mWarning: While the checks may work locally, they may fail on CI/CD if the linked packages are not released and up to date.\033[0m"
