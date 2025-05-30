@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.23.4
+
+### Patch Changes
+
+- 181d605: dependabot: directory '/', update @eslint/js
+- 181d605: dependabot: directory '/', update @sveltejs/kit
+- 181d605: dependabot: directory '/', update @types/node
+- 181d605: dependabot: directory '/', update eslint-plugin-svelte
+- 181d605: dependabot: directory '/', update eslint
+- 181d605: dependabot: directory '/', update rollup
+- 181d605: dependabot: directory '/', update svelte
+- 82f7c2e: dependabot: directory '/', update @azure/functions
+- 82f7c2e: dependabot: directory '/', update @sentry/sveltekit
+- 82f7c2e: dependabot: directory '/', update @types/node
+- 82f7c2e: dependabot: directory '/', update eslint-plugin-svelte
+- 82f7c2e: dependabot: directory '/', update globals
+- 82f7c2e: dependabot: directory '/', update rollup
+- 82f7c2e: dependabot: directory '/', update svelte
+- 93a3069: dependabot: directory '/', update @sentry/sveltekit
+- 93a3069: dependabot: directory '/', update @types/node
+- 93a3069: dependabot: directory '/', update svelte
+- 93a3069: dependabot: directory '/', update typescript-eslint
+
 ## 0.23.3
 
 ### Patch Changes
