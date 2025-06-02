@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.23.5
+
+### Patch Changes
+
+- caaefb3: dependabot: directory '/', update @eslint/js
+- caaefb3: dependabot: directory '/', update @types/node
+- caaefb3: dependabot: directory '/', update eslint-plugin-svelte
+- caaefb3: dependabot: directory '/', update eslint
+- caaefb3: dependabot: directory '/', update svelte
+
 ## 0.23.4
 
 ### Patch Changes
